@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#05070d">
+  <meta name="description" content="黑洞大冒险：驾驶不断成长的黑洞，吞噬整座城市，突破猎手黑洞的追杀，吞下30层高塔。">
+  <title>黑洞大冒险 · Black Hole Odyssey</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+    <canvas id="game" aria-label="黑洞大冒险游戏画面"></canvas>
+    <div class="canvas-grain" aria-hidden="true"></div>
+    <div class="canvas-vignette" aria-hidden="true"></div>
+
+    <!-- 游戏 HUD -->
+    <section id="hud" class="hud is-hidden" aria-label="游戏状态">
+      <div class="hud-top">
+        <div class="hud-panel player-panel">
+          <div id="level-orb" class="level-orb" style="--pct:0">
+            <div class="level-orb-inner">
+              <span id="hud-level">1</span>
+              <small>LV</small>
+            </div>
+          </div>
+          <div class="player-data">
+            <div class="player-row">
+              <span class="eyebrow">黑洞等级</span>
+              <strong id="hud-level-name">LV.1</strong>
+            </div>
+            <div class="xp-track" aria-hidden="true"><i id="xp-fill" class="xp-fill"></i></div>
+            <div class="player-row sub">
+              <span id="hud-score">积分 0</span>
+              <span id="hud-next">0 / 35</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-panel timer-panel">
+          <span class="eyebrow">RUN TIME</span>
+          <strong id="hud-timer">00:00.0</strong>
+          <span class="best-time">最佳 <b id="hud-best">--:--.-</b></span>
+        </div>
+
+        <div class="top-actions">
+          <button id="btn-sound" class="icon-btn" type="button" aria-label="关闭声音" title="声音">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="sound-wave" d="M16 8.5a5 5 0 0 1 0 7M18.7 6a8.5 8.5 0 0 1 0 12"/></svg>
+          </button>
+          <button id="btn-pause" class="icon-btn" type="button" aria-label="暂停游戏" title="暂停">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="objective-panel hud-panel">
+        <div class="objective-head">
+          <span id="hud-map" class="eyebrow">01 · 霓虹旧城</span>
+          <span id="objective-level" class="objective-chip">目标 LV.15</span>
+        </div>
+        <div class="objective-main">
+          <span class="objective-icon" aria-hidden="true">◎</span>
+          <span>吞噬 30 层高塔</span>
+        </div>
+        <div class="objective-sub">
+          <span id="objective-distance">高塔 1,300m</span>
+          <span class="dot-sep"></span>
+          <span id="objective-state">先吃小东西，慢慢变大</span>
+        </div>
+      </div>
+
+      <div id="threat-panel" class="threat-panel">
+        <span class="threat-dot"></span>
+        <span id="threat-text">猎手正在游荡</span>
+        <span id="threat-distance">--</span>
+      </div>
+
+      <div class="minimap-panel hud-panel">
+        <div class="minimap-head">
+          <span>城市雷达</span>
+          <span id="minimap-map">01</span>
+        </div>
+        <canvas id="minimap" width="360" height="250" aria-label="小地图"></canvas>
+        <div class="minimap-legend">
+          <span><i class="you"></i>你</span>
+          <span><i class="hunter"></i>猎手</span>
+          <span><i class="goal"></i>高塔</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 开始菜单 -->
+    <section id="screen-menu" class="screen screen-menu">
+      <div class="menu-shell">
+        <div class="menu-copy">
+          <div class="brand-line">
+            <span class="brand-glyph" aria-hidden="true">
+              <i class="glyph-ring"></i><i class="glyph-core"></i>
+            </span>
+            <span class="eyebrow">单机 · 2.5D · 吞噬进化</span>
+          </div>
+          <h1>黑洞<span>大冒险</span></h1>
+          <p class="lede">你是城市中心的一枚小小奇点。<br>吃掉比自己更小的东西，扩张事件视界，<br>在猎手黑洞追上你之前，吞下那座 30 层高塔。</p>
+
+          <div class="menu-metrics">
+            <div><b>15</b><span>等级上限</span></div>
+            <div><b>03</b><span>霓虹地图</span></div>
+            <div><b>01</b><span>猎手黑洞</span></div>
+          </div>
+
+          <div class="control-strip">
+            <div class="control-item"><kbd>W A S D</kbd><span>键盘移动</span></div>
+            <div class="control-item"><span class="drag-icon" aria-hidden="true"></span><span>按住拖动</span></div>
+            <div class="control-item"><kbd>ESC</kbd><span>暂停</span></div>
+          </div>
+
+          <div class="menu-warning">
+            <span class="warning-mark">!</span>
+            <p><b>猎手比你高 3 级。</b>被它完全罩住就会被吞噬。<br>升到 11 级后，猎手将成为你的猎物。</p>
+          </div>
+        </div>
+
+        <div class="menu-select">
+          <div class="select-head">
+            <div>
+              <span class="eyebrow">选择降落点</span>
+              <h2>今晚，吃哪座城？</h2>
+            </div>
+            <span class="difficulty-note">难度递增</span>
+          </div>
+
+          <div class="map-cards" role="radiogroup" aria-label="选择地图">
+            <button class="map-card is-selected" type="button" data-map="0" role="radio" aria-checked="true">
+              <canvas class="map-thumb" width="480" height="190" aria-hidden="true"></canvas>
+              <div class="map-body">
+                <div class="map-title-row">
+                  <span class="map-index">01</span>
+                  <div class="map-name"><strong>霓虹旧城</strong><small>NEON OLD TOWN</small></div>
+                  <span class="difficulty-dots" data-level="1" aria-label="难度 1"><i></i><i></i><i></i></span>
+                </div>
+                <p>街区松散，小吃很多，适合第一次扩张。</p>
+                <div class="map-record"><span>最快通关</span><b data-best="0">尚无记录</b></div>
+              </div>
+            </button>
+
+            <button class="map-card" type="button" data-map="1" role="radio" aria-checked="false">
+              <canvas class="map-thumb" width="480" height="190" aria-hidden="true"></canvas>
+              <div class="map-body">
+                <div class="map-title-row">
+                  <span class="map-index">02</span>
+                  <div class="map-name"><strong>钢铁港湾</strong><small>IRON HARBOR</small></div>
+                  <span class="difficulty-dots" data-level="2" aria-label="难度 2"><i></i><i></i><i></i></span>
+                </div>
+                <p>厂房与码头绵延，高塔更远，猎手更快。</p>
+                <div class="map-record"><span>最快通关</span><b data-best="1">尚无记录</b></div>
+              </div>
+            </button>
+
+            <button class="map-card" type="button" data-map="2" role="radio" aria-checked="false">
+              <canvas class="map-thumb" width="480" height="190" aria-hidden="true"></canvas>
+              <div class="map-body">
+                <div class="map-title-row">
+                  <span class="map-index">03</span>
+                  <div class="map-name"><strong>云端都会</strong><small>SKYLINE METRO</small></div>
+                  <span class="difficulty-dots" data-level="3" aria-label="难度 3"><i></i><i></i><i></i></span>
+                </div>
+                <p>巨型都市，猎物稀少，猎手几乎与你同速。</p>
+                <div class="map-record"><span>最快通关</span><b data-best="2">尚无记录</b></div>
+              </div>
+            </button>
+          </div>
+
+          <button id="btn-start" class="btn btn-primary btn-start" type="button">
+            <span>开始吞噬</span><small>ENTER</small>
+          </button>
+          <p class="menu-tip"><span class="tip-hole" aria-hidden="true"></span> 吃剩的街区会变成你的养料，地图会随你一起“缩小”。</p>
+        </div>
+      </div>
+      <div class="menu-footer">
+        <span>BLACK HOLE ODYSSEY</span>
+        <span>LOCAL SINGLE PLAYER · v1.0</span>
+      </div>
+    </section>
+
+    <!-- 暂停 -->
+    <section id="screen-pause" class="screen screen-modal is-hidden">
+      <div class="modal-card pause-card">
+        <span class="eyebrow">PAUSED</span>
+        <h2>吞到一半，喘口气。</h2>
+        <div class="pause-stats">
+          <div><span>当前等级</span><b id="pause-level">LV.1</b></div>
+          <div><span>当前用时</span><b id="pause-time">00:00.0</b></div>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-resume" class="btn btn-primary" type="button">继续游戏</button>
+          <button id="btn-pause-restart" class="btn btn-ghost" type="button">重新开始</button>
+          <button id="btn-pause-menu" class="btn btn-quiet" type="button">返回选关</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 结算 -->
+    <section id="screen-result" class="screen screen-modal is-hidden">
+      <div class="modal-card result-card">
+        <span id="result-kicker" class="eyebrow">RUN COMPLETE</span>
+        <div id="result-emblem" class="result-emblem" aria-hidden="true">◎</div>
+        <h2 id="result-title">吞噬高塔！</h2>
+        <p id="result-sub">整座城市的灯光都落进了你的事件视界。</p>
+
+        <div class="result-stats">
+          <div><span>黑洞等级</span><b id="result-level">LV.15</b></div>
+          <div><span>吞噬积分</span><b id="result-score">0</b></div>
+          <div><span>本局用时</span><b id="result-time">00:00.0</b></div>
+          <div><span>最快记录</span><b id="result-best">00:00.0</b></div>
+        </div>
+
+        <div id="new-record" class="new-record is-hidden"><i></i> NEW RECORD <i></i></div>
+
+        <div class="modal-actions result-actions">
+          <button id="btn-result-next" class="btn btn-primary is-hidden" type="button">前往下一张地图</button>
+          <button id="btn-result-retry" class="btn btn-primary" type="button">再来一局</button>
+          <button id="btn-result-menu" class="btn btn-ghost" type="button">选择地图</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast-layer" class="toast-layer" aria-live="polite"></div>
+
+    <div id="levelup" class="levelup" aria-live="polite">
+      <span class="levelup-kicker">EVENT HORIZON EXPANDED</span>
+      <strong>LV.<span id="levelup-level">2</span></strong>
+      <em id="levelup-text">事件视界扩张</em>
+    </div>
+
+    <div id="hint" class="hint is-hidden">
+      <div class="hint-hand" aria-hidden="true"></div>
+      <div>
+        <b>按住画面并拖动</b>
+        <span>或使用 WASD / 方向键移动</span>
+      </div>
+    </div>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
