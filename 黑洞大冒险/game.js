@@ -318,7 +318,7 @@
           if (!AC) return;
           this.ctx = new AC();
           this.master = this.ctx.createGain();
-          this.master.gain.value = 0.16;
+          this.master.gain.value = 0.22;
           this.master.connect(this.ctx.destination);
         }
         if (this.ctx.state === 'suspended') this.ctx.resume();
@@ -352,8 +352,8 @@
       if (now - this.lastEat < 36) return;
       this.lastEat = now;
       const pitch = clamp(560 - size * 2.5, 120, 540);
-      this.tone(pitch + Math.random() * 40, 0.095, 'sine', 0.055, pitch * 0.55);
-      if (size > 24) this.tone(86 + Math.random() * 18, 0.2, 'triangle', 0.04, 48);
+      this.tone(pitch + Math.random() * 40, 0.095, 'sine', 0.07, pitch * 0.55);
+      if (size > 24) this.tone(86 + Math.random() * 18, 0.2, 'triangle', 0.05, 48);
     }
 
     levelUp() {
@@ -365,7 +365,7 @@
 
     danger() {
       if (!this.enabled) return;
-      this.tone(145, 0.22, 'sawtooth', 0.035, 92);
+      this.tone(145, 0.22, 'sawtooth', 0.048, 92);
     }
 
     win() {

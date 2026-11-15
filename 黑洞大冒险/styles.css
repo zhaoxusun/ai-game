@@ -533,7 +533,7 @@ body.is-playing .canvas-grain {
 }
 
 .minimap-legend .you { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
-.minimap-legend .hunter { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+.minimap-legend .hunter { background: linear-gradient(90deg, #ff3b5c, #2fd9b8, #ffab2e); box-shadow: 0 0 8px rgba(255, 68, 104, 0.55); }
 .minimap-legend .goal { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
 
 /* ---------- Screens & menu ---------- */
@@ -1640,8 +1640,33 @@ body.is-playing .canvas-grain {
     overflow: hidden;
   }
 
+  /* Keep the radar on phones: tuck a compact version into the empty strip
+     between the threat pill and the objective bar. */
   .minimap-panel {
-    display: none;
+    display: block;
+    right: 10px;
+    top: auto;
+    bottom: calc(max(10px, env(safe-area-inset-bottom)) + 92px);
+    width: 138px;
+    padding: 7px 8px 8px;
+    border-radius: 13px;
+  }
+
+  .minimap-head {
+    margin-bottom: 5px;
+    font-size: 7px;
+    letter-spacing: 0.1em;
+  }
+
+  .minimap-legend {
+    gap: 7px;
+    padding-top: 5px;
+    font-size: 7px;
+  }
+
+  .minimap-legend i {
+    width: 4px;
+    height: 4px;
   }
 
   .toast-layer {
@@ -1653,7 +1678,7 @@ body.is-playing .canvas-grain {
   }
 
   .hint {
-    bottom: 96px;
+    bottom: calc(max(10px, env(safe-area-inset-bottom)) + 240px);
     white-space: nowrap;
   }
 
@@ -1840,7 +1865,6 @@ body.is-playing .canvas-grain {
   }
 
   .hint {
-    bottom: 88px;
     padding: 9px 12px;
     font-size: 9px;
   }
@@ -1883,7 +1907,7 @@ body.is-playing .canvas-grain {
   }
 }
 
-@media (max-height: 560px) {
+@media (max-height: 560px) and (orientation: landscape) {
   .hint {
     display: none;
   }
@@ -1907,6 +1931,7 @@ body.is-playing .canvas-grain {
   .minimap-panel {
     right: 10px;
     bottom: 10px;
+    top: auto;
     width: 180px;
     padding: 8px 10px 9px;
   }
