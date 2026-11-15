@@ -84,7 +84,7 @@
       id: 0,
       name: '霓虹旧城',
       en: 'NEON OLD TOWN',
-      tagline: '街区松散，小吃很多，适合第一次扩张。',
+      tagline: '低矮街区、霓虹招牌，只有 1 个猎手，适合第一次扩张。',
       seed: 0x1a2b3c4d,
       cols: 4,
       rows: 3,
@@ -96,11 +96,19 @@
       towerRow: 0,
       spawnCol: 2,
       spawnRow: 2,
+      hunters: 1,
       enemySpeed: 0.8,
       enemySpawnDist: 1040,
       majorTiers: [3, 3, 3, 4, 4, 4, 5, 5, 6, 7],
       minorTiers: [2, 2, 2, 2, 3, 3, 4],
       scatter: { small: 4, green: 2 },
+      theme: {
+        key: 'neon',
+        hueBase: 208,
+        hueSpread: 44,
+        glassTint: '#4aa6dc',
+        windowWarm: 56
+      },
       palette: {
         void: '#04060c',
         mapEdge: 'rgba(98, 190, 255, 0.2)',
@@ -121,35 +129,50 @@
       id: 1,
       name: '钢铁港湾',
       en: 'IRON HARBOR',
-      tagline: '厂房与码头绵延，高塔更远，猎手更快。',
+      tagline: '锈色码头与集装箱，2 个猎手巡逻，猎手更快。',
       seed: 0x77c1e3a9,
       cols: 5,
       rows: 4,
-      margin: 130,
+      margin: 150,
       blockW: 680,
       blockH: 660,
-      roadW: 110,
+      roadW: 118,
       towerCol: 2,
       towerRow: 0,
       spawnCol: 2,
       spawnRow: 3,
+      hunters: 2,
       enemySpeed: 0.91,
       enemySpawnDist: 940,
       majorTiers: [3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 5],
       minorTiers: [2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5],
       scatter: { small: 3, green: 2 },
+      theme: {
+        key: 'harbor',
+        hueBase: 34,
+        hueSpread: 28,
+        glassTint: '#6fb3a3',
+        windowWarm: 74,
+        smallPool: ['barrel', 'trash', 'cone', 'lamp', 'person', 'barrel', 'bench', 'hydrant'],
+        greenPool: ['barrel', 'container', 'planter', 'bush'],
+        vehiclePool: ['van', 'van', 'car', 'bus', 'car'],
+        decor: [
+          { type: 'crane', count: 4 },
+          { type: 'container', count: 7 }
+        ]
+      },
       palette: {
-        void: '#06070b',
-        mapEdge: 'rgba(255, 183, 100, 0.18)',
-        ground: '#0d111a',
-        block: '#151b28',
-        blockAlt: '#111824',
-        sidewalk: '#282d39',
-        road: '#080b12',
-        line: 'rgba(255, 219, 166, 0.17)',
-        grass: '#1b261d',
+        void: '#07070b',
+        mapEdge: 'rgba(255, 176, 92, 0.24)',
+        ground: '#12151a',
+        block: '#1c1f24',
+        blockAlt: '#181b20',
+        sidewalk: '#2d3036',
+        road: '#0a0b0d',
+        line: 'rgba(255, 208, 156, 0.18)',
+        grass: '#1d2620',
         accent: '#ffb454',
-        accent2: '#5ce4ff',
+        accent2: '#4fe0c8',
         glow: '#ff9a4d',
         beam: 'rgba(255, 205, 112, 0.78)'
       }
@@ -158,7 +181,7 @@
       id: 2,
       name: '云端都会',
       en: 'SKYLINE METRO',
-      tagline: '巨型都市，猎物稀少，猎手几乎与你同速。',
+      tagline: '高空玻璃都市，3 个猎手围猎，几乎与你同速。',
       seed: 0xc0ffee42,
       cols: 6,
       rows: 4,
@@ -170,27 +193,48 @@
       towerRow: 0,
       spawnCol: 3,
       spawnRow: 3,
+      hunters: 3,
       enemySpeed: 1.01,
       enemySpawnDist: 860,
       majorTiers: [3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7],
       minorTiers: [2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5],
       scatter: { small: 3, green: 1 },
+      theme: {
+        key: 'sky',
+        hueBase: 272,
+        hueSpread: 36,
+        glassTint: '#b06bff',
+        windowWarm: 30,
+        smallPool: ['person', 'cone', 'lamp', 'trash', 'bench', 'planter'],
+        greenPool: ['planter', 'bush', 'holo', 'planter'],
+        vehiclePool: ['car', 'car', 'van', 'bus'],
+        decor: [{ type: 'holo', count: 4 }]
+      },
       palette: {
-        void: '#05060d',
-        mapEdge: 'rgba(255, 108, 167, 0.2)',
-        ground: '#0c0d18',
-        block: '#131528',
-        blockAlt: '#101222',
-        sidewalk: '#25283e',
-        road: '#070810',
-        line: 'rgba(206, 199, 255, 0.16)',
-        grass: '#182131',
-        accent: '#ff6198',
-        accent2: '#5ceaff',
-        glow: '#ff6a9c',
-        beam: 'rgba(255, 206, 121, 0.8)'
+        void: '#070612',
+        mapEdge: 'rgba(196, 120, 255, 0.24)',
+        ground: '#0f0d1f',
+        block: '#181633',
+        blockAlt: '#141129',
+        sidewalk: '#2b2850',
+        road: '#0a0916',
+        line: 'rgba(224, 196, 255, 0.18)',
+        grass: '#1b1740',
+        accent: '#c46bff',
+        accent2: '#5cf0ff',
+        glow: '#ff62c4',
+        beam: 'rgba(255, 208, 122, 0.8)'
       }
     }
+  ];
+
+  // Hunter rings must stay clear of the player ring, which is tinted with each
+  // map's `glow` (orange on maps 1–2, magenta on map 3). The third tint only
+  // appears on map 3, so it can stay warm.
+  const ENEMY_TINTS = [
+    { primary: '#ff3b5c', secondary: '#ff8fa6' },
+    { primary: '#2fd9b8', secondary: '#8ff6e6' },
+    { primary: '#ffab2e', secondary: '#ffd79a' }
   ];
 
   const BUILDINGS = {
@@ -240,7 +284,11 @@
     bus: { r: 38, h: 38, points: 70, style: 'bus' },
     kiosk: { r: 34, h: 48, points: 76, style: 'kiosk' },
     fountain: { r: 44, h: 28, points: 100, style: 'fountain' },
-    statue: { r: 35, h: 82, points: 90, style: 'statue' }
+    statue: { r: 35, h: 82, points: 90, style: 'statue' },
+    barrel: { r: 9, h: 22, points: 8, style: 'barrel' },
+    container: { r: 30, h: 38, points: 58, style: 'container' },
+    crane: { r: 54, h: 244, points: 340, style: 'crane' },
+    holo: { r: 24, h: 120, points: 78, style: 'holo' }
   };
 
   const SMALL_POOL = ['person', 'trash', 'cone', 'hydrant', 'mailbox', 'bench', 'lamp', 'planter'];
@@ -443,7 +491,8 @@
     map: null,
     world: null,
     player: null,
-    enemy: null,
+    enemies: [],
+    killer: null,
     tower: null,
     camera: { x: 0, y: 0, zoom: 1, shake: 0, shakeX: 0, shakeY: 0 },
     objects: [],
@@ -499,7 +548,10 @@
   }
 
   function makeBuilding(template, x, y, def, rng) {
-    const hue = 205 + (rng() * 80 - 40);
+    const theme = def.theme || {};
+    const hueBase = theme.hueBase == null ? 205 : theme.hueBase;
+    const hueSpread = theme.hueSpread == null ? 80 : theme.hueSpread;
+    const hue = hueBase + (rng() * hueSpread - hueSpread / 2);
     return {
       id: nextObjectId++,
       kind: 'building',
@@ -513,6 +565,8 @@
       hue,
       seed: 1 + ((rng() * 99999) | 0),
       neon: rng() < 0.28 ? def.palette.accent2 : def.palette.accent,
+      glassTint: theme.glassTint || '#4aa6dc',
+      windowWarm: theme.windowWarm == null ? 56 : theme.windowWarm,
       eaten: false,
       goal: false,
       angle: 0
@@ -529,7 +583,11 @@
       tree: [110, 138, 92],
       bush: [126, 142, 104],
       fountain: [191],
-      statue: [44]
+      statue: [44],
+      barrel: [16, 42, 205],
+      container: [18, 36, 196, 150],
+      crane: [30, 205],
+      holo: [286, 196, 322]
     };
     const hueArr = hues[typeKey] || [210];
     return {
@@ -562,6 +620,10 @@
     const objects = [];
     const occupied = [];
     const reserved = [];
+    const theme = def.theme || {};
+    const smallPool = theme.smallPool || SMALL_POOL;
+    const greenPool = theme.greenPool || GREEN_POOL;
+    const vehiclePool = theme.vehiclePool || VEHICLE_POOL;
 
     const towerBlock = grid.blocks[def.towerRow * def.cols + def.towerCol];
     const spawnBlock = grid.blocks[def.spawnRow * def.cols + def.spawnCol];
@@ -684,7 +746,7 @@
       if (block === spawnBlock) continue;
       const smallCount = def.scatter.small + ((rng() * 3) | 0);
       for (let k = 0; k < smallCount; k++) {
-        const type = SMALL_POOL[(rng() * SMALL_POOL.length) | 0];
+        const type = smallPool[(rng() * smallPool.length) | 0];
         const r = PROPS[type].r;
         for (let attempt = 0; attempt < 8; attempt++) {
           const x = block.x1 + r + 8 + rng() * (block.w - r * 2 - 16);
@@ -694,7 +756,7 @@
       }
       const greenCount = def.scatter.green + (rng() < 0.45 ? 1 : 0);
       for (let k = 0; k < greenCount; k++) {
-        const type = GREEN_POOL[(rng() * GREEN_POOL.length) | 0];
+        const type = greenPool[(rng() * greenPool.length) | 0];
         const r = PROPS[type].r;
         for (let attempt = 0; attempt < 10; attempt++) {
           const x = block.x1 + r + 10 + rng() * (block.w - r * 2 - 20);
@@ -740,7 +802,7 @@
         if (rng() < 0.28) continue;
         const y = grid.ys[r] + def.roadW * 0.55 + rng() * (def.blockH - def.roadW * 1.1);
         const x = grid.xs[c] + (rng() < 0.5 ? -1 : 1) * def.roadW * 0.23;
-        const type = VEHICLE_POOL[(rng() * VEHICLE_POOL.length) | 0];
+        const type = vehiclePool[(rng() * vehiclePool.length) | 0];
         const p = addProp(type, x, y, 3);
         if (p) p.angle = rng() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
       }
@@ -750,7 +812,7 @@
         if (rng() < 0.34) continue;
         const x = grid.xs[c] + def.roadW * 0.55 + rng() * (def.blockW - def.roadW * 1.1);
         const y = grid.ys[r] + (rng() < 0.5 ? -1 : 1) * def.roadW * 0.23;
-        const type = VEHICLE_POOL[(rng() * VEHICLE_POOL.length) | 0];
+        const type = vehiclePool[(rng() * vehiclePool.length) | 0];
         const p = addProp(type, x, y, 3);
         if (p) p.angle = rng() < 0.5 ? 0 : Math.PI;
       }
@@ -763,7 +825,22 @@
       addProp('person', spawn.x + Math.cos(angle) * radius, spawn.y + Math.sin(angle) * radius, 2);
     }
 
-    const enemySpawn = pickEnemySpawn(def, grid, spawn, tower);
+    // Theme landmarks: harbor cranes and shipping containers, sky holo pylons.
+    const decor = theme.decor || [];
+    for (let d = 0; d < decor.length; d++) {
+      const entry = decor[d];
+      const spec = PROPS[entry.type];
+      if (!spec) continue;
+      let placed = 0;
+      for (let attempt = 0; attempt < 260 && placed < entry.count; attempt++) {
+        const block = candidates[(rng() * candidates.length) | 0];
+        const x = block.x1 + spec.r + 12 + rng() * Math.max(0, block.w - spec.r * 2 - 24);
+        const y = block.y1 + spec.r + 12 + rng() * Math.max(0, block.h - spec.r * 2 - 24);
+        if (addProp(entry.type, x, y, entry.type === 'crane' ? 56 : 12)) placed++;
+      }
+    }
+
+    const enemySpawns = pickEnemySpawns(def, grid, spawn, tower, def.hunters || 1);
 
     return {
       def,
@@ -771,25 +848,40 @@
       objects,
       spawn,
       tower,
-      enemySpawn,
+      enemySpawns,
       width: grid.width,
       height: grid.height,
       palette: def.palette
     };
   }
 
-  function pickEnemySpawn(def, grid, spawn, tower) {
+  function pickEnemySpawns(def, grid, spawn, tower, count) {
+    const total = Math.max(1, count || 1);
     const baseAngle = -1.9 + (def.id * 0.55);
-    for (let attempt = 0; attempt < 30; attempt++) {
-      const angle = baseAngle + (Math.random() * 1.3 - 0.65);
-      const radius = def.enemySpawnDist * (0.9 + Math.random() * 0.25);
-      const x = clamp(spawn.x + Math.cos(angle) * radius, 150, grid.width - 150);
-      const y = clamp(spawn.y + Math.sin(angle) * radius, 150, grid.height - 150);
-      if (dist(x, y, spawn.x, spawn.y) < 650) continue;
-      if (dist(x, y, tower.x, tower.y) < 330) continue;
-      return { x, y };
+    const out = [];
+    for (let i = 0; i < total; i++) {
+      let spot = null;
+      for (let attempt = 0; attempt < 48; attempt++) {
+        const angle = baseAngle + (i * TAU) / total + (Math.random() * 0.9 - 0.45);
+        const radius = def.enemySpawnDist * (0.88 + Math.random() * 0.3);
+        const x = clamp(spawn.x + Math.cos(angle) * radius, 170, grid.width - 170);
+        const y = clamp(spawn.y + Math.sin(angle) * radius, 170, grid.height - 170);
+        if (dist(x, y, spawn.x, spawn.y) < 620) continue;
+        if (dist(x, y, tower.x, tower.y) < 340) continue;
+        if (out.some((o) => dist2(o.x, o.y, x, y) < 560 * 560)) continue;
+        spot = { x, y };
+        break;
+      }
+      if (!spot) {
+        const angle = baseAngle + (i * TAU) / total + 0.35;
+        spot = {
+          x: clamp(spawn.x + Math.cos(angle) * def.enemySpawnDist, 170, grid.width - 170),
+          y: clamp(spawn.y + Math.sin(angle) * def.enemySpawnDist, 170, grid.height - 170)
+        };
+      }
+      out.push(spot);
     }
-    return { x: clamp(spawn.x - 720, 150, grid.width - 150), y: clamp(spawn.y - 580, 150, grid.height - 150) };
+    return out;
   }
 
   // ============================================================
@@ -840,7 +932,8 @@
     };
   }
 
-  function createEnemy(spawn, level, def) {
+  function createEnemy(spawn, level, def, index) {
+    const tint = ENEMY_TINTS[index % ENEMY_TINTS.length];
     return {
       x: spawn.x,
       y: spawn.y,
@@ -855,6 +948,9 @@
       waypoint: null,
       retarget: 0,
       speedFactor: def.enemySpeed,
+      index: index || 0,
+      tint: tint.primary,
+      tint2: tint.secondary,
       beingEaten: false,
       swallowed: 0,
       frozen: false
@@ -1001,24 +1097,32 @@
         dom.objectiveState.textContent = '冲进高塔底部，完成吞噬';
       } else {
         dom.objectiveLevel.textContent = `目标 LV.${MAX_LEVEL}`;
-        if (p.level >= 11) dom.objectiveState.textContent = game.enemy ? '你已比猎手更大，可以反杀' : '猎手已被吞噬，专注高塔';
+        if (p.level >= 11) dom.objectiveState.textContent = game.enemies.length ? '你已比猎手更大，可以反杀' : '猎手已被吞噬，专注高塔';
         else if (p.level >= 8) dom.objectiveState.textContent = '继续扩张，甩开猎手';
         else dom.objectiveState.textContent = '先吃小东西，慢慢变大';
       }
     }
 
-    if (game.enemy) {
-      const enemy = game.enemy;
-      const d = dist(p.x, p.y, enemy.x, enemy.y);
+    const alive = game.enemies.filter((e) => !e.beingEaten);
+    if (alive.length) {
+      let nearest = alive[0];
+      let nearestDist = dist(p.x, p.y, nearest.x, nearest.y);
+      for (let i = 1; i < alive.length; i++) {
+        const d = dist(p.x, p.y, alive[i].x, alive[i].y);
+        if (d < nearestDist) {
+          nearest = alive[i];
+          nearestDist = d;
+        }
+      }
       dom.threatPanel.classList.toggle('is-safe', p.level >= 11);
       if (p.level >= 11) {
-        dom.threatText.textContent = '可反杀猎手';
-      } else if (d < 420) {
-        dom.threatText.textContent = '猎手正在靠近';
+        dom.threatText.textContent = alive.length > 1 ? `可反杀猎手 ×${alive.length}` : '可反杀猎手';
+      } else if (nearestDist < 420) {
+        dom.threatText.textContent = alive.length > 1 ? `猎手 ×${alive.length} 正在靠近` : '猎手正在靠近';
       } else {
-        dom.threatText.textContent = `猎手 LV.${enemy.level} 游荡中`;
+        dom.threatText.textContent = alive.length > 1 ? `猎手 ×${alive.length} 游荡中` : `猎手 LV.${nearest.level} 游荡中`;
       }
-      dom.threatDistance.textContent = fmtDist(d);
+      dom.threatDistance.textContent = fmtDist(nearestDist);
       dom.threatPanel.classList.remove('is-hidden');
     } else {
       dom.threatPanel.classList.add('is-hidden');
@@ -1042,14 +1146,15 @@
     const world = generateMap(MAPS[id]);
     const player = createPlayer(world.spawn);
     const enemyLevel = Math.min(10, player.level + 3);
-    const enemy = createEnemy(world.enemySpawn, enemyLevel, MAPS[id]);
+    const enemies = world.enemySpawns.map((sp, i) => createEnemy(sp, enemyLevel, MAPS[id], i));
 
     game.map = MAPS[id];
     game.world = world;
     game.objects = world.objects;
     game.tower = world.tower;
     game.player = player;
-    game.enemy = enemy;
+    game.enemies = enemies;
+    game.killer = null;
     game.effects = [];
     game.particles = [];
     game.floaters = [];
@@ -1093,7 +1198,8 @@
     }, 950);
     window.setTimeout(() => {
       if (game.mode === 'playing') {
-        showToast(`猎手黑洞 LV.${enemyLevel} 已进入街区，小心被完全罩住。`, 'danger', 4200);
+        const label = enemies.length > 1 ? `${enemies.length} 个猎手黑洞 LV.${enemyLevel}` : `猎手黑洞 LV.${enemyLevel}`;
+        showToast(`${label} 已进入街区，小心被完全罩住。`, 'danger', 4200);
       }
     }, 3900);
   }
@@ -1128,7 +1234,8 @@
     document.body.classList.remove('is-playing');
     game.world = null;
     game.player = null;
-    game.enemy = null;
+    game.enemies = [];
+    game.killer = null;
     game.tower = null;
     game.objects = [];
     game.effects = [];
@@ -1205,6 +1312,7 @@
     const w = canvas.width;
     const h = canvas.height;
     const p = def.palette;
+    const themeKey = (def.theme && def.theme.key) || 'neon';
     const rng = mulberry32(def.seed ^ 0xa55a5a);
 
     const bg = c.createLinearGradient(0, 0, w, h);
@@ -1213,6 +1321,15 @@
     bg.addColorStop(1, p.void);
     c.fillStyle = bg;
     c.fillRect(0, 0, w, h);
+
+    if (themeKey === 'sky') {
+      const aurora = c.createLinearGradient(0, 0, 0, h * 0.5);
+      aurora.addColorStop(0, 'rgba(180, 110, 255, 0)');
+      aurora.addColorStop(0.55, 'rgba(180, 110, 255, 0.14)');
+      aurora.addColorStop(1, 'rgba(120, 240, 255, 0)');
+      c.fillStyle = aurora;
+      c.fillRect(0, 0, w, h * 0.5);
+    }
 
     const glow = c.createRadialGradient(w * 0.72, h * 0.25, 0, w * 0.72, h * 0.25, w * 0.52);
     glow.addColorStop(0, p.accent + '2c');
@@ -1236,7 +1353,7 @@
       const bh = 14 + rng() * 74;
       const x = rng() * w;
       const y = h * 0.86 - bh;
-      c.fillStyle = i % 5 === 0 ? p.accent : '#111b2d';
+      c.fillStyle = i % 5 === 0 ? p.accent : p.blockAlt;
       c.fillRect(x, y, bw, bh);
     }
     c.globalAlpha = 1;
@@ -1256,13 +1373,30 @@
     c.stroke();
     c.setLineDash([]);
 
+    if (themeKey === 'harbor') {
+      const water = c.createLinearGradient(0, h * 0.9, 0, h);
+      water.addColorStop(0, '#0b2f34');
+      water.addColorStop(1, '#061b21');
+      c.fillStyle = water;
+      c.fillRect(0, h * 0.9, w, h * 0.1);
+      c.strokeStyle = 'rgba(79, 224, 200, 0.22)';
+      c.lineWidth = 1;
+      for (let i = 0; i < 7; i++) {
+        const y = h * 0.92 + i * 4;
+        c.beginPath();
+        c.moveTo((i * 73) % w, y);
+        c.lineTo(((i * 73) % w) + 30 + (i % 3) * 18, y);
+        c.stroke();
+      }
+    }
+
     // foreground buildings
     for (let i = 0; i < 13; i++) {
       const bw = 22 + rng() * 50;
       const bh = 28 + rng() * 92;
       const x = rng() * w;
       const y = h * 0.88 - bh;
-      c.fillStyle = i % 4 === 0 ? '#172339' : '#101827';
+      c.fillStyle = i % 4 === 0 ? p.block : p.blockAlt;
       c.fillRect(x, y, bw, bh);
       const lit = 0.1 + rng() * 0.45;
       c.fillStyle = p.accent;
@@ -1565,15 +1699,24 @@
   }
 
   function syncEnemyLevel() {
-    const enemy = game.enemy;
     const player = game.player;
-    if (!enemy || !player || enemy.beingEaten) return;
+    if (!player || !game.enemies.length) return;
     const needed = player.level <= 7 ? player.level + 3 : 10;
     const targetLevel = clamp(needed, 1, 10);
-    if (targetLevel > enemy.level) {
-      enemy.level = targetLevel;
-      enemy.targetRadius = LEVEL_RADII[targetLevel - 1];
-      enemy.pulse = 1;
+    let upgraded = 0;
+    for (let i = 0; i < game.enemies.length; i++) {
+      const enemy = game.enemies[i];
+      if (enemy.beingEaten) continue;
+      if (targetLevel > enemy.level) {
+        enemy.level = targetLevel;
+        enemy.targetRadius = LEVEL_RADII[targetLevel - 1];
+        enemy.pulse = 1;
+        upgraded++;
+      }
+    }
+    if (upgraded > 1) {
+      showToast(`猎手 ×${upgraded} 吸收暗物质，升到了 LV.${targetLevel}。`, 'danger', 2600);
+    } else if (upgraded === 1) {
       showToast(`猎手吸收暗物质，升到了 LV.${targetLevel}。`, 'danger', 2600);
     }
   }
@@ -1652,40 +1795,53 @@
     finishRun(true, 'tower');
   }
 
-  function startPlayerDeath() {
-    if (game.mode !== 'playing' || !game.enemy) return;
+  function startPlayerDeath(killer) {
+    if (game.mode !== 'playing' || !game.player) return;
+    let enemy = killer && !killer.beingEaten ? killer : null;
+    if (!enemy) {
+      const p = game.player;
+      for (let i = 0; i < game.enemies.length; i++) {
+        const e = game.enemies[i];
+        if (e.beingEaten) continue;
+        if (!enemy || dist(p.x, p.y, e.x, e.y) < dist(p.x, p.y, enemy.x, enemy.y)) enemy = e;
+      }
+    }
+    if (!enemy) return;
+    game.killer = enemy;
     game.mode = 'dying';
     game.deathTimer = 0;
     game.finalTime = game.runTime;
     game.player.beingEaten = true;
     game.player.deathStartRadius = game.player.radius;
-    game.enemy.frozen = true;
+    enemy.frozen = true;
     resetJoystick();
     input.keys.clear();
     hideHint();
     addShake(1.15);
-    spawnBurst(game.player.x, game.player.y, 45, '#ff5b7d', 180, 3.4);
-    spawnShockwave(game.enemy.x, game.enemy.y, game.enemy.radius * 0.5, game.enemy.radius * 2.2, 'rgba(255, 64, 101, 0.62)', 1.2);
-    showToast('你被猎手黑洞完全罩住了。', 'danger', 2200);
+    const killedBy = game.enemies.length > 1 ? `猎手 ${enemy.index + 1}` : '猎手黑洞';
+    spawnBurst(game.player.x, game.player.y, 45, enemy.tint || '#ff3b5c', 180, 3.4);
+    spawnShockwave(enemy.x, enemy.y, enemy.radius * 0.5, enemy.radius * 2.2, hexToRgba(enemy.tint || '#ff3b5c', 0.62), 1.2);
+    showToast(`你被${killedBy}完全罩住了。`, 'danger', 2200);
     sound.danger();
   }
 
-  function startEnemyEaten() {
-    const e = game.enemy;
+  function startEnemyEaten(e) {
     if (!e || e.beingEaten) return;
     e.beingEaten = true;
     e.swallowed = 0;
     addShake(0.65);
     spawnShockwave(e.x, e.y, e.radius * 0.5, e.radius * 2.4, 'rgba(92, 234, 255, 0.62)', 1.2);
-    spawnBurst(e.x, e.y, 55, '#73efff', 230, 3.8);
-    showToast('反杀！猎手正在被拖入你的事件视界。', 'cyan', 3200);
+    spawnBurst(e.x, e.y, 55, e.tint2 || '#73efff', 230, 3.8);
+    const label = game.enemies.length > 1 ? `反杀！猎手 ${e.index + 1} 正在被拖入你的事件视界。` : '反杀！猎手正在被拖入你的事件视界。';
+    showToast(label, 'cyan', 3200);
     sound.levelUp();
   }
 
-  function finishEnemyEaten() {
+  function finishEnemyEaten(e) {
     const p = game.player;
     if (!p) return;
-    game.enemy = null;
+    const idx = game.enemies.indexOf(e);
+    if (idx >= 0) game.enemies.splice(idx, 1);
     const targetLevel = Math.min(MAX_LEVEL, p.level + 1);
     if (p.level < MAX_LEVEL) {
       p.score = Math.max(p.score + 350, LEVEL_THRESHOLDS[targetLevel - 1] + 12);
@@ -1700,7 +1856,8 @@
     } else {
       p.score += 1200;
     }
-    addFloater(p.x, p.y - p.radius - 26, '猎手 ×1', '#8ff4ff', 22);
+    const label = game.enemies.length ? `猎手 ×1 · 剩 ${game.enemies.length}` : '猎手清空';
+    addFloater(p.x, p.y - p.radius - 26, label, '#8ff4ff', 22);
     spawnShockwave(p.x, p.y, p.radius * 0.6, p.radius * 4, 'rgba(94, 234, 255, 0.72)', 1.4);
     spawnBurst(p.x, p.y, 65, '#83f2ff', 260, 4.6);
     addShake(0.8);
@@ -1727,8 +1884,15 @@
     p.radius = damp(p.radius, p.targetRadius, 7.5, dt);
   }
 
-  function updateEnemy(dt) {
-    const e = game.enemy;
+  function updateEnemies(dt) {
+    if (!game.player) return;
+    const list = game.enemies.slice();
+    for (let i = 0; i < list.length; i++) {
+      updateEnemy(dt, list[i]);
+    }
+  }
+
+  function updateEnemy(dt, e) {
     const p = game.player;
     if (!e || !p) return;
 
@@ -1739,7 +1903,7 @@
       e.y = damp(e.y, p.y, 5, dt);
       e.radius = lerp(e.radius, 0, dt * 4.2);
       e.pulse = Math.max(0, e.pulse - dt * 3);
-      if (t >= 1) finishEnemyEaten();
+      if (t >= 1) finishEnemyEaten(e);
       return;
     }
 
@@ -1798,7 +1962,7 @@
         life: 0.45 + Math.random() * 0.4,
         maxLife: 0.8,
         size: 0.8 + Math.random() * 1.5,
-        color: '#ff5f80',
+        color: e.tint || '#ff5f80',
         drag: 0.2,
         gravity: 0,
         glow: true
@@ -1808,26 +1972,29 @@
 
   function checkEnemyCollision() {
     const p = game.player;
-    const e = game.enemy;
-    if (!p || !e || e.beingEaten || game.mode !== 'playing') return;
-    const d = dist(p.x, p.y, e.x, e.y);
+    if (!p || game.mode !== 'playing') return;
+    for (let i = 0; i < game.enemies.length; i++) {
+      const e = game.enemies[i];
+      if (!e || e.beingEaten) continue;
+      const d = dist(p.x, p.y, e.x, e.y);
 
-    if (p.level >= 11 && p.radius > e.radius * 1.01) {
-      if (d + e.radius * 0.68 < p.radius) {
-        startEnemyEaten();
+      if (p.level >= 11 && p.radius > e.radius * 1.01) {
+        if (d + e.radius * 0.68 < p.radius) {
+          startEnemyEaten(e);
+          continue;
+        }
+      }
+
+      if (d + p.radius * 0.86 < e.radius) {
+        startPlayerDeath(e);
         return;
       }
-    }
 
-    if (d + p.radius * 0.86 < e.radius) {
-      startPlayerDeath();
-      return;
-    }
-
-    if (d < 520) {
-      if (performance.now() - game.lastDangerBeep > 2600) {
-        game.lastDangerBeep = performance.now();
-        sound.danger();
+      if (d < 520 && game.mode === 'playing') {
+        if (performance.now() - game.lastDangerBeep > 2600) {
+          game.lastDangerBeep = performance.now();
+          sound.danger();
+        }
       }
     }
   }
@@ -1904,7 +2071,7 @@
   function updateDying(dt) {
     game.deathTimer += dt;
     const p = game.player;
-    const e = game.enemy;
+    const e = game.killer;
     if (p && e) {
       const t = clamp(game.deathTimer / 1.25, 0, 1);
       p.x = damp(p.x, e.x, 3.2, dt);
@@ -1923,7 +2090,7 @@
           life: 0.4 + Math.random() * 0.5,
           maxLife: 0.9,
           size: 1 + Math.random() * 2.2,
-          color: '#ff5479',
+          color: e.tint || '#ff3b5c',
           drag: 0.2,
           gravity: 0,
           glow: true
@@ -1969,7 +2136,7 @@
       game.runTime += dt;
       game.stateTime += dt;
       updatePlayer(dt);
-      updateEnemy(dt);
+      updateEnemies(dt);
       checkObjectCollisions();
       if (game.mode === 'playing') checkEnemyCollision();
       updateTowerHint();
@@ -2053,12 +2220,61 @@
 
   function drawSky(time) {
     const p = game.world.palette;
+    const themeKey = (game.world.def.theme && game.world.def.theme.key) || 'neon';
     const grad = ctx.createLinearGradient(0, 0, 0, H);
     grad.addColorStop(0, p.void);
     grad.addColorStop(0.58, p.void);
     grad.addColorStop(1, '#02040a');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
+
+    if (themeKey === 'harbor') {
+      // Amber port haze sitting on the horizon.
+      const haze = ctx.createLinearGradient(0, H * 0.42, 0, H);
+      haze.addColorStop(0, 'rgba(255, 150, 60, 0)');
+      haze.addColorStop(0.55, 'rgba(255, 142, 58, 0.055)');
+      haze.addColorStop(1, 'rgba(255, 166, 84, 0.02)');
+      ctx.fillStyle = haze;
+      ctx.fillRect(0, 0, W, H);
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 3; i++) {
+        const y = H * (0.62 + i * 0.1) + Math.sin(time * 0.25 + i) * 10;
+        const fog = ctx.createLinearGradient(0, y - 40, 0, y + 40);
+        fog.addColorStop(0, 'rgba(255, 180, 110, 0)');
+        fog.addColorStop(0.5, `rgba(255, 176, 108, ${0.02 + i * 0.006})`);
+        fog.addColorStop(1, 'rgba(255, 180, 110, 0)');
+        ctx.fillStyle = fog;
+        ctx.fillRect(0, y - 40, W, 80);
+      }
+      ctx.restore();
+    } else if (themeKey === 'sky') {
+      // Aurora ribbons above the skyline.
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      for (let band = 0; band < 3; band++) {
+        const baseY = H * (0.12 + band * 0.07);
+        const color = band === 0 ? '180, 110, 255' : band === 1 ? '255, 110, 220' : '90, 240, 255';
+        const ribbon = ctx.createLinearGradient(0, baseY - 60, 0, baseY + 90);
+        ribbon.addColorStop(0, `rgba(${color}, 0)`);
+        ribbon.addColorStop(0.45, `rgba(${color}, 0.05)`);
+        ribbon.addColorStop(1, `rgba(${color}, 0)`);
+        ctx.fillStyle = ribbon;
+        ctx.beginPath();
+        ctx.moveTo(0, baseY);
+        for (let x = 0; x <= W; x += 48) {
+          const y = baseY + Math.sin(x * 0.004 + time * 0.25 + band * 1.7) * 34;
+          ctx.lineTo(x, y);
+        }
+        for (let x = W; x >= 0; x -= 48) {
+          const y = baseY + 70 + Math.sin(x * 0.0032 + time * 0.18 + band) * 26;
+          ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
 
     const neb = ctx.createRadialGradient(W * 0.74, H * 0.22, 0, W * 0.74, H * 0.22, Math.max(W, H) * 0.52);
     neb.addColorStop(0, p.accent + '09');
@@ -2087,6 +2303,8 @@
     const def = world.def;
     const grid = world.grid;
     const p = world.palette;
+    const themeKey = (def.theme && def.theme.key) || 'neon';
+    const trng = mulberry32(def.seed ^ 0x51f15e);
     const rw = def.roadW;
 
     // Floating slab shadow & rim.
@@ -2101,6 +2319,8 @@
     ctx.save();
     roundedRect(ctx, 0, 0, grid.width, grid.height, 46);
     ctx.clip();
+
+    if (themeKey === 'harbor') drawHarborWater(grid, def, p, trng);
 
     // Block pavement.
     for (let i = 0; i < grid.blocks.length; i++) {
@@ -2182,7 +2402,11 @@
     ctx.setLineDash([]);
 
     // Crosswalks around intersections.
-    ctx.fillStyle = 'rgba(210, 228, 255, 0.10)';
+    ctx.fillStyle = themeKey === 'harbor'
+      ? 'rgba(255, 214, 164, 0.10)'
+      : themeKey === 'sky'
+        ? 'rgba(196, 236, 255, 0.10)'
+        : 'rgba(210, 228, 255, 0.10)';
     for (let c = 0; c < grid.xs.length; c++) {
       for (let r = 0; r < grid.ys.length; r++) {
         if (c > 0 && c < grid.xs.length - 1 && r > 0 && r < grid.ys.length - 1) {
@@ -2198,6 +2422,15 @@
           }
         }
       }
+    }
+
+    // District-specific street markings.
+    if (themeKey === 'harbor') {
+      drawHarborTracks(grid, def);
+    } else if (themeKey === 'sky') {
+      drawSkyGroundDecor(grid, def, p, trng);
+    } else {
+      drawNeonRoadLines(grid, def, p);
     }
 
     // Ground grime and puddles.
@@ -2217,14 +2450,14 @@
     // Spawn plaza.
     const spawn = world.spawn;
     const spGlow = ctx.createRadialGradient(spawn.x, spawn.y, 16, spawn.x, spawn.y, 188);
-    spGlow.addColorStop(0, 'rgba(100, 220, 255, 0.09)');
-    spGlow.addColorStop(0.72, 'rgba(100, 220, 255, 0.022)');
-    spGlow.addColorStop(1, 'rgba(100, 220, 255, 0)');
+    spGlow.addColorStop(0, hexToRgba(p.accent, 0.1));
+    spGlow.addColorStop(0.72, hexToRgba(p.accent, 0.025));
+    spGlow.addColorStop(1, hexToRgba(p.accent, 0));
     ctx.fillStyle = spGlow;
     ctx.beginPath();
     ctx.arc(spawn.x, spawn.y, 188, 0, TAU);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(120, 228, 255, 0.14)';
+    ctx.strokeStyle = hexToRgba(p.accent, 0.16);
     ctx.lineWidth = 2;
     ctx.setLineDash([14, 14]);
     ctx.beginPath();
@@ -2265,10 +2498,202 @@
     ctx.restore();
   }
 
-  // The ground never changes, so bake it once into an offscreen canvas and
-  // blit it in world space every frame (rasterisation is clipped to the
-  // viewport). This removes hundreds of path fills, the full-map road strokes
-  // and the giant 70px slab shadow from the hot loop.
+  // ------------------------------------------------------------
+  // Per-district ground decoration
+  // ------------------------------------------------------------
+  function drawHarborWater(grid, def, p, rng) {
+    const band = Math.min(def.margin - 16, 132);
+    if (band < 24) return;
+    const grad = ctx.createLinearGradient(0, 0, 0, grid.height);
+    grad.addColorStop(0, '#0b2f34');
+    grad.addColorStop(0.5, '#071e24');
+    grad.addColorStop(1, '#0a2b31');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, grid.width, band);
+    ctx.fillRect(0, grid.height - band, grid.width, band);
+    ctx.fillRect(0, band, band, grid.height - band * 2);
+    ctx.fillRect(grid.width - band, band, band, grid.height - band * 2);
+
+    // Ripples.
+    ctx.strokeStyle = hexToRgba(p.accent2, 0.13);
+    ctx.lineWidth = 1.4;
+    for (let i = 0; i < 44; i++) {
+      const side = i % 4;
+      let x;
+      let y;
+      if (side === 0 || side === 1) {
+        x = rng() * grid.width;
+        y = side === 0 ? rng() * band : grid.height - rng() * band;
+      } else {
+        x = side === 2 ? rng() * band : grid.width - rng() * band;
+        y = band + rng() * (grid.height - band * 2);
+      }
+      const w = 10 + rng() * 44;
+      ctx.globalAlpha = 0.3 + rng() * 0.5;
+      ctx.beginPath();
+      ctx.ellipse(x, y, w, w * 0.13, 0, 0, TAU);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Quay edges.
+    ctx.strokeStyle = 'rgba(255, 202, 138, 0.3)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(band, band, grid.width - band * 2, grid.height - band * 2);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(band + 4, band + 4, grid.width - band * 2 - 8, grid.height - band * 2 - 8);
+
+    // Piers reaching into the water.
+    ctx.fillStyle = '#1d2328';
+    for (let i = 0; i < 4; i++) {
+      const px = band + 80 + rng() * (grid.width - band * 2 - 160);
+      const pw = 16 + rng() * 10;
+      ctx.fillRect(px, band - 54, pw, 56);
+      ctx.fillRect(px, grid.height - band - 2, pw, 54);
+      ctx.strokeStyle = 'rgba(255, 196, 126, 0.18)';
+      ctx.lineWidth = 1;
+      for (let k = 1; k < 6; k++) {
+        ctx.beginPath();
+        ctx.moveTo(px, band - 54 + k * 9);
+        ctx.lineTo(px + pw, band - 54 + k * 9);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(px, grid.height - band - 2 + k * 9);
+        ctx.lineTo(px + pw, grid.height - band - 2 + k * 9);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function drawHarborTracks(grid, def) {
+    const rw = def.roadW;
+    ctx.save();
+    for (let r = 0; r < grid.ys.length; r++) {
+      const cy = grid.ys[r];
+      ctx.strokeStyle = 'rgba(214, 192, 152, 0.16)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, cy - rw * 0.16);
+      ctx.lineTo(grid.width, cy - rw * 0.16);
+      ctx.moveTo(0, cy + rw * 0.16);
+      ctx.lineTo(grid.width, cy + rw * 0.16);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(214, 192, 152, 0.09)';
+      ctx.lineWidth = 2.4;
+      ctx.setLineDash([5, 21]);
+      ctx.beginPath();
+      ctx.moveTo(0, cy - rw * 0.22);
+      ctx.lineTo(grid.width, cy - rw * 0.22);
+      ctx.moveTo(0, cy + rw * 0.22);
+      ctx.lineTo(grid.width, cy + rw * 0.22);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // Hazard chevrons at intersections.
+    ctx.fillStyle = 'rgba(255, 178, 84, 0.09)';
+    for (let c = 1; c < grid.xs.length - 1; c++) {
+      for (let r = 1; r < grid.ys.length - 1; r++) {
+        const x = grid.xs[c];
+        const y = grid.ys[r];
+        for (let k = -2; k <= 2; k++) {
+          ctx.save();
+          ctx.translate(x + k * 16, y);
+          ctx.rotate(Math.PI / 4);
+          ctx.fillRect(-3.5, -3.5, 7, 7);
+          ctx.restore();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawNeonRoadLines(grid, def, p) {
+    const rw = def.roadW;
+    ctx.save();
+    ctx.lineWidth = 2;
+    for (let c = 0; c < grid.xs.length; c++) {
+      ctx.strokeStyle = hexToRgba(c % 2 === 0 ? p.accent : p.accent2, 0.2);
+      ctx.beginPath();
+      ctx.moveTo(grid.xs[c] - rw / 2, 0);
+      ctx.lineTo(grid.xs[c] - rw / 2, grid.height);
+      ctx.moveTo(grid.xs[c] + rw / 2, 0);
+      ctx.lineTo(grid.xs[c] + rw / 2, grid.height);
+      ctx.stroke();
+    }
+    for (let r = 0; r < grid.ys.length; r++) {
+      ctx.strokeStyle = hexToRgba(r % 2 === 0 ? p.accent2 : p.accent, 0.18);
+      ctx.beginPath();
+      ctx.moveTo(0, grid.ys[r] - rw / 2);
+      ctx.lineTo(grid.width, grid.ys[r] - rw / 2);
+      ctx.moveTo(0, grid.ys[r] + rw / 2);
+      ctx.lineTo(grid.width, grid.ys[r] + rw / 2);
+      ctx.stroke();
+    }
+    // Corner beacons.
+    ctx.fillStyle = hexToRgba(p.accent, 0.24);
+    for (let c = 1; c < grid.xs.length - 1; c++) {
+      for (let r = 1; r < grid.ys.length - 1; r++) {
+        ctx.save();
+        ctx.translate(grid.xs[c], grid.ys[r]);
+        ctx.rotate(Math.PI / 4);
+        ctx.fillRect(-4, -4, 8, 8);
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawSkyGroundDecor(grid, def, p, rng) {
+    // Glowing light bridges.
+    ctx.save();
+    for (let c = 0; c < grid.xs.length; c++) {
+      const x = grid.xs[c];
+      const g = ctx.createLinearGradient(x - 6, 0, x + 6, 0);
+      g.addColorStop(0, hexToRgba(p.accent2, 0));
+      g.addColorStop(0.5, hexToRgba(p.accent2, 0.22));
+      g.addColorStop(1, hexToRgba(p.accent2, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(x - 6, 0, 12, grid.height);
+    }
+    for (let r = 0; r < grid.ys.length; r++) {
+      const y = grid.ys[r];
+      const g = ctx.createLinearGradient(0, y - 6, 0, y + 6);
+      g.addColorStop(0, hexToRgba(p.accent, 0));
+      g.addColorStop(0.5, hexToRgba(p.accent, 0.2));
+      g.addColorStop(1, hexToRgba(p.accent, 0));
+      ctx.fillStyle = g;
+      ctx.fillRect(0, y - 6, grid.width, 12);
+    }
+    // Hover pads at intersections.
+    for (let c = 1; c < grid.xs.length - 1; c++) {
+      for (let r = 1; r < grid.ys.length - 1; r++) {
+        ctx.strokeStyle = hexToRgba(p.accent2, 0.18);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(grid.xs[c], grid.ys[r], 13, 0, TAU);
+        ctx.stroke();
+      }
+    }
+    // Low cloud banks drifting over the blocks.
+    for (let i = 0; i < 14; i++) {
+      const x = rng() * grid.width;
+      const y = rng() * grid.height;
+      const rx = 70 + rng() * 150;
+      const ry = rx * (0.22 + rng() * 0.2);
+      const cl = ctx.createRadialGradient(x, y, 0, x, y, rx);
+      cl.addColorStop(0, 'rgba(190, 170, 255, 0.075)');
+      cl.addColorStop(0.6, 'rgba(150, 130, 230, 0.04)');
+      cl.addColorStop(1, 'rgba(120, 100, 200, 0)');
+      ctx.fillStyle = cl;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, TAU);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+
   const groundCache = { canvas: null, scale: 1, margin: 110, width: 0, height: 0, world: null };
 
   function buildGroundCache() {
@@ -2324,8 +2749,8 @@
     const playerHole = !!opts.isPlayer;
     const enemyHole = !!opts.isEnemy;
     const palette = game.world ? game.world.palette : MAPS[game.selectedMap].palette;
-    const primary = enemyHole ? '#ff465f' : palette.glow;
-    const secondary = enemyHole ? '#ff8fa6' : palette.accent;
+    const primary = enemyHole ? (opts.tint || '#ff465f') : palette.glow;
+    const secondary = enemyHole ? (opts.tint2 || '#ff8fa6') : palette.accent;
     const rot = opts.angle || 0;
     const pulse = opts.pulse || 0;
     const rr = r * (1 + pulse * 0.045);
@@ -2420,7 +2845,7 @@
       // Jagged hunter corona.
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = 'rgba(255, 69, 97, 0.3)';
+      ctx.strokeStyle = hexToRgba(primary, 0.3);
       ctx.lineWidth = 1.4;
       for (let i = 0; i < 12; i++) {
         const a = rot * 0.4 + (i / 12) * TAU;
@@ -2514,8 +2939,9 @@
     return { frontTop, frontBottom, backTop, half, skew };
   }
 
-  function drawWindows(x, y, w, h, seed, cols, rows, color, alpha) {
+  function drawWindows(x, y, w, h, seed, cols, rows, color, alpha, warmBias) {
     if (rows < 1 || cols < 1) return;
+    const warmPct = warmBias == null ? 57 : warmBias;
     const padX = w * 0.1;
     const padY = h * 0.06;
     const cw = (w - padX * 2) / cols;
@@ -2533,7 +2959,7 @@
           ctx.fillRect(x + padX + c * cw + cw * 0.18, y + padY + r * ch + ch * 0.2, cw * 0.64, ch * 0.58);
           continue;
         }
-        const warm = v % 7 < 4;
+        const warm = (v % 100) < warmPct;
         ctx.fillStyle = warm ? `rgba(255, 208, 128, ${alpha})` : hexToRgba(color, alpha);
         ctx.fillRect(x + padX + c * cw + cw * 0.17, y + padY + r * ch + ch * 0.18, cw * 0.66, ch * 0.6);
         if (v % 5 === 0) {
@@ -2601,7 +3027,7 @@
       ctx.stroke();
       // windows
       const cols = w > 80 ? 3 : 2;
-      drawWindows(x - w * 0.4, frontTop + wallH * 0.18, w * 0.8, wallH * 0.55, seed, cols, Math.max(1, Math.round(wallH / 32)), accent, 0.5);
+      drawWindows(x - w * 0.4, frontTop + wallH * 0.18, w * 0.8, wallH * 0.55, seed, cols, Math.max(1, Math.round(wallH / 32)), accent, 0.5, o.windowWarm);
       // door
       ctx.fillStyle = hsl(hue + 20, 28, 7);
       ctx.fillRect(x - w * 0.09, frontBottom - wallH * 0.28, w * 0.18, wallH * 0.27);
@@ -2682,7 +3108,7 @@
       ctx.lineTo(x - ww * 0.32, info.frontBottom - bodyH * 0.28);
       ctx.closePath();
       ctx.fill();
-      drawWindows(x - ww * 0.42, info.frontTop + bodyH * 0.2, ww * 0.84, bodyH * 0.3, seed, 4, Math.max(1, Math.round(bodyH / 38)), accent, 0.4);
+      drawWindows(x - ww * 0.42, info.frontTop + bodyH * 0.2, ww * 0.84, bodyH * 0.3, seed, 4, Math.max(1, Math.round(bodyH / 38)), accent, 0.4, o.windowWarm);
       return;
     }
 
@@ -2692,7 +3118,7 @@
       const info = drawPrism(x, y, ww, bodyH, d * 1.15, front, side, roof, edge);
       ctx.fillStyle = hexToRgba(accent, 0.25);
       ctx.fillRect(x - ww * 0.44, info.frontTop + bodyH * 0.14, ww * 0.88, 5);
-      drawWindows(x - ww * 0.46, info.frontTop + bodyH * 0.25, ww * 0.92, bodyH * 0.55, seed, 7, 3, accent, 0.35);
+      drawWindows(x - ww * 0.46, info.frontTop + bodyH * 0.25, ww * 0.92, bodyH * 0.55, seed, 7, 3, accent, 0.35, o.windowWarm);
       ctx.fillStyle = 'rgba(255, 220, 155, 0.16)';
       ctx.fillRect(x - ww * 0.2, info.frontBottom - bodyH * 0.22, ww * 0.4, bodyH * 0.21);
       ctx.fillStyle = 'rgba(255, 245, 220, 0.7)';
@@ -2713,9 +3139,9 @@
         const sy = baseY - offset;
         drawPrism(x, sy - seg.d * 0.45, seg.w, seg.h, seg.d, front, side, roof, edge);
         if (i === 0) {
-          drawWindows(x - seg.w * 0.43, sy - seg.h, seg.w * 0.86, seg.h * 0.9, seed, 5, 9, accent, 0.46);
+          drawWindows(x - seg.w * 0.43, sy - seg.h, seg.w * 0.86, seg.h * 0.9, seed, 5, 9, accent, 0.46, o.windowWarm);
         } else {
-          drawWindows(x - seg.w * 0.42, sy - seg.h, seg.w * 0.84, seg.h * 0.82, seed + i, 3, 4, accent, 0.5);
+          drawWindows(x - seg.w * 0.42, sy - seg.h, seg.w * 0.84, seg.h * 0.82, seed + i, 3, 4, accent, 0.5, o.windowWarm);
         }
         offset += seg.h;
       }
@@ -2734,13 +3160,13 @@
     if (style === 'landmark') {
       let baseY = y + d * 0.45;
       const info = drawPrism(x, y, w * 1.08, h * 0.42, d * 1.1, front, side, roof, edge);
-      drawWindows(x - w * 0.49, info.frontTop, w * 0.98, h * 0.38, seed, 7, 8, accent, 0.48);
+      drawWindows(x - w * 0.49, info.frontTop, w * 0.98, h * 0.38, seed, 7, 8, accent, 0.48, o.windowWarm);
       baseY -= h * 0.42;
       drawPrism(x, baseY - d * 0.42, w * 0.68, h * 0.3, d * 0.78, front, side, roof, edge);
-      drawWindows(x - w * 0.31, baseY - h * 0.3, w * 0.62, h * 0.27, seed + 2, 4, 7, accent, 0.55);
+      drawWindows(x - w * 0.31, baseY - h * 0.3, w * 0.62, h * 0.27, seed + 2, 4, 7, accent, 0.55, o.windowWarm);
       baseY -= h * 0.3;
       drawPrism(x, baseY - d * 0.34, w * 0.4, h * 0.22, d * 0.56, front, side, roof, edge);
-      drawWindows(x - w * 0.18, baseY - h * 0.22, w * 0.36, h * 0.2, seed + 4, 3, 5, accent, 0.62);
+      drawWindows(x - w * 0.18, baseY - h * 0.22, w * 0.36, h * 0.2, seed + 4, 3, 5, accent, 0.62, o.windowWarm);
       baseY -= h * 0.22;
       // crown
       ctx.fillStyle = hsl(hue, 32, 22);
@@ -2768,15 +3194,16 @@
       const info = drawPrism(x, y, ww, bodyH, d, front, side, roof, edge);
       if (style === 'glass') {
         const glass = ctx.createLinearGradient(x - ww / 2, info.frontTop, x + ww / 2, info.frontBottom);
-        glass.addColorStop(0, 'rgba(70, 166, 220, 0.22)');
-        glass.addColorStop(0.34, 'rgba(40, 100, 168, 0.28)');
-        glass.addColorStop(0.65, 'rgba(20, 58, 105, 0.33)');
-        glass.addColorStop(1, 'rgba(22, 42, 72, 0.2)');
+        const tint = o.glassTint || '#4aa6dc';
+        glass.addColorStop(0, hexToRgba(tint, 0.22));
+        glass.addColorStop(0.34, hexToRgba(tint, 0.28));
+        glass.addColorStop(0.65, hexToRgba(tint, 0.33));
+        glass.addColorStop(1, hexToRgba(tint, 0.2));
         ctx.fillStyle = glass;
         ctx.fillRect(x - ww / 2, info.frontTop, ww, bodyH);
         // vertical mullions
         ctx.globalAlpha = 0.28;
-        ctx.strokeStyle = 'rgba(160, 221, 255, 0.5)';
+        ctx.strokeStyle = hexToRgba(tint, 0.5);
         ctx.lineWidth = 1;
         for (let i = 1; i < 6; i++) {
           const lx = x - ww / 2 + i * ww / 6;
@@ -2786,12 +3213,12 @@
           ctx.stroke();
         }
         ctx.globalAlpha = 1;
-        drawWindows(x - ww * 0.47, info.frontTop + 12, ww * 0.94, bodyH - 24, seed, 6, Math.max(5, Math.floor(bodyH / 34)), accent, 0.55);
+        drawWindows(x - ww * 0.47, info.frontTop + 12, ww * 0.94, bodyH - 24, seed, 6, Math.max(5, Math.floor(bodyH / 34)), accent, 0.55, o.windowWarm);
         // roof crown
         ctx.fillStyle = hexToRgba(accent, 0.55);
         ctx.fillRect(x - ww * 0.24, info.frontTop - d * 0.6, ww * 0.48, 3);
       } else {
-        drawWindows(x - ww * 0.44, info.frontTop + 10, ww * 0.88, bodyH - 26, seed, 5, Math.max(4, Math.floor(bodyH / 30)), accent, 0.45);
+        drawWindows(x - ww * 0.44, info.frontTop + 10, ww * 0.88, bodyH - 26, seed, 5, Math.max(4, Math.floor(bodyH / 30)), accent, 0.45, o.windowWarm);
         // vertical accent strips
         ctx.fillStyle = hexToRgba(accent, 0.17);
         ctx.fillRect(x - ww * 0.47, info.frontTop, 2, bodyH);
@@ -2822,7 +3249,7 @@
 
     // Fallback box.
     const info = drawPrism(x, y, w, h, d, front, side, roof, edge);
-    drawWindows(x - w * 0.44, info.frontTop + 8, w * 0.88, h - 20, seed, 5, Math.max(3, Math.floor(h / 30)), accent, 0.42);
+    drawWindows(x - w * 0.44, info.frontTop + 8, w * 0.88, h - 20, seed, 5, Math.max(3, Math.floor(h / 30)), accent, 0.42, o.windowWarm);
   }
 
   // ============================================================
@@ -3231,6 +3658,210 @@
     ctx.fill();
   }
 
+  function drawBarrel(o) {
+    const x = o.x;
+    const y = o.y;
+    const r = o.r;
+    const h = o.h;
+    const hue = o.hue;
+    ctx.fillStyle = hsl(hue, 38, 20);
+    roundedRect(ctx, x - r, y - h, r * 2, h, r * 0.35);
+    ctx.fill();
+    ctx.fillStyle = hsl(hue, 42, 30);
+    ctx.beginPath();
+    ctx.ellipse(x, y - h, r, r * 0.4, 0, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = hsl(hue, 20, 12);
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.ellipse(x, y - h * 0.62, r * 0.98, r * 0.3, 0, 0, TAU);
+    ctx.moveTo(x - r, y - h * 0.3);
+    ctx.ellipse(x, y - h * 0.3, r, r * 0.3, 0, 0, TAU);
+    ctx.stroke();
+    ctx.fillStyle = hexToRgba(o.neon || '#ffb454', 0.45);
+    ctx.fillRect(x - r * 0.7, y - h * 0.53, r * 1.4, 2.2);
+  }
+
+  function drawContainer(o, time) {
+    const x = o.x;
+    const y = o.y;
+    const hue = o.hue;
+    const w = o.r * 2.05;
+    const h = o.h * 0.82;
+    const d = o.r * 0.52;
+    const front = hsl(hue, 30, 24);
+    const side = hsl(hue, 32, 15);
+    const roof = hsl(hue, 26, 31);
+    const info = drawPrism(x, y, w, h, d, front, side, roof, 'rgba(255,255,255,0.06)');
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x - w / 2, info.frontTop, w, h);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(0,0,0,0.24)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 14; i++) {
+      const lx = x - w / 2 + (i + 0.5) * (w / 14);
+      ctx.beginPath();
+      ctx.moveTo(lx, info.frontTop);
+      ctx.lineTo(lx, info.frontBottom);
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.fillRect(x - w / 2, info.frontTop + h * 0.42, w, 3);
+    const label = ['IRON', 'CARGO', 'PORT'][o.seed % 3];
+    ctx.fillStyle = hexToRgba(o.neon || '#ffd08a', 0.5);
+    ctx.font = `700 ${Math.max(5, o.r * 0.26)}px "SFMono-Regular", monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, info.frontTop + h * 0.24);
+    void time;
+  }
+
+  function drawCrane(o, time) {
+    const x = o.x;
+    const y = o.y;
+    const hue = o.hue;
+    const h = o.h;
+    const span = o.r * 1.55;
+    const topY = y - h * 0.8;
+    const legH = y - topY;
+    const body = hsl(hue, 26, 21);
+    const dark = hsl(hue, 24, 12);
+    const lat = hsl(hue, 24, 15);
+    const lit = hexToRgba(o.neon || '#ffb454', 0.55);
+
+    // Ground rails the gantry rolls on.
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.34)';
+    ctx.fillRect(x - span * 1.16, y - 2, span * 2.32, 3);
+    ctx.fillStyle = hexToRgba('#ffb454', 0.12);
+    ctx.fillRect(x - span * 1.16, y - 2, span * 2.32, 1);
+
+    // A-frame legs.
+    ctx.strokeStyle = body;
+    ctx.lineWidth = Math.max(4, o.r * 0.13);
+    ctx.lineCap = 'square';
+    const legX = (s, t, inner) => x + s * span * (inner ? 0.58 - 0.24 * t : 1 - 0.66 * t);
+    for (let s = -1; s <= 1; s += 2) {
+      ctx.beginPath();
+      ctx.moveTo(legX(s, 0, false), y);
+      ctx.lineTo(legX(s, 1, false), topY);
+      ctx.moveTo(legX(s, 0, true), y);
+      ctx.lineTo(legX(s, 1, true), topY);
+      ctx.stroke();
+    }
+
+    // Lattice bracing between the leg pairs.
+    ctx.strokeStyle = lat;
+    ctx.lineWidth = Math.max(1.4, o.r * 0.045);
+    ctx.beginPath();
+    for (let s = -1; s <= 1; s += 2) {
+      for (let i = 0; i < 3; i++) {
+        const t0 = i / 3;
+        const t1 = (i + 1) / 3;
+        ctx.moveTo(legX(s, t0, false), y - legH * t0);
+        ctx.lineTo(legX(s, t1, true), y - legH * t1);
+        ctx.moveTo(legX(s, t0, true), y - legH * t0);
+        ctx.lineTo(legX(s, t1, false), y - legH * t1);
+      }
+    }
+    ctx.stroke();
+
+    // Top beam.
+    ctx.fillStyle = body;
+    ctx.fillRect(x - span * 1.06, topY, span * 2.12, Math.max(5, h * 0.04));
+    ctx.fillStyle = dark;
+    ctx.fillRect(x - span * 1.06, topY + Math.max(5, h * 0.04) - 2, span * 2.12, 2);
+
+    // Trolley, cable and the container it is lifting.
+    const trolleyX = x + Math.sin(time * 0.6 + o.phase) * span * 0.5;
+    ctx.fillStyle = hsl(hue, 22, 34);
+    ctx.fillRect(trolleyX - 8, topY + 2, 16, 8);
+    const drop = legH * (0.56 + Math.sin(time * 1.1 + o.phase) * 0.05);
+    const loadY = topY + drop;
+    ctx.strokeStyle = 'rgba(224, 232, 244, 0.4)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(trolleyX, topY + 8);
+    ctx.lineTo(trolleyX, loadY);
+    ctx.stroke();
+    const cw = span * 0.5;
+    const chh = Math.max(9, h * 0.052);
+    ctx.fillStyle = hsl(26, 30, 26);
+    ctx.fillRect(trolleyX - cw / 2, loadY, cw, chh);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 6; i++) {
+      const lx = trolleyX - cw / 2 + (i / 6) * cw;
+      ctx.beginPath();
+      ctx.moveTo(lx, loadY);
+      ctx.lineTo(lx, loadY + chh);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(255, 214, 150, 0.28)';
+    ctx.strokeRect(trolleyX - cw / 2, loadY, cw, chh);
+
+    // Warning light on the beam tip.
+    const blink = 0.4 + Math.sin(time * 3 + o.phase) * 0.35;
+    ctx.fillStyle = hexToRgba('#ff5b5b', blink);
+    ctx.shadowColor = '#ff5b5b';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(x + span * 0.98, topY - 4, 3, 0, TAU);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // Painted hazard stripe on the beam.
+    ctx.fillStyle = lit;
+    ctx.fillRect(x - span * 0.42, topY + 1, span * 0.84, 2);
+  }
+
+  function drawHolo(o, time) {
+    const x = o.x;
+    const y = o.y;
+    const r = o.r;
+    const h = o.h;
+    const hue = o.hue;
+    // Base.
+    drawPrism(x, y, r * 1.7, 20, r * 0.5, hsl(hue, 22, 20), hsl(hue, 24, 11), hsl(hue, 20, 27), 'rgba(255,255,255,0.06)');
+    // Light column.
+    const top = y - h;
+    const glow = ctx.createLinearGradient(0, top, 0, y - 12);
+    glow.addColorStop(0, hexToRgba(o.neon || '#7ef0ff', 0.02));
+    glow.addColorStop(0.55, hexToRgba(o.neon || '#7ef0ff', 0.16));
+    glow.addColorStop(1, hexToRgba(o.neon || '#7ef0ff', 0.05));
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = glow;
+    const w = r * 1.5 * (0.85 + Math.sin(time * 1.6 + o.phase) * 0.06);
+    ctx.fillRect(x - w / 2, top, w, h - 16);
+    // Scan lines.
+    ctx.strokeStyle = hexToRgba(o.neon || '#7ef0ff', 0.24);
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 8; i++) {
+      const yy = top + ((time * 26 + i * (h / 8)) % (h - 18));
+      ctx.beginPath();
+      ctx.moveTo(x - w / 2 + 3, yy);
+      ctx.lineTo(x + w / 2 - 3, yy);
+      ctx.stroke();
+    }
+    // Emblem.
+    ctx.strokeStyle = hexToRgba(o.neon || '#7ef0ff', 0.55);
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(x, top + h * 0.3, r * 0.42, time * 0.8, time * 0.8 + TAU * 0.78);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, top + h * 0.3, r * 0.24, -time * 1.1, -time * 1.1 + TAU * 0.6);
+    ctx.stroke();
+    ctx.restore();
+    // Frame edges.
+    ctx.strokeStyle = hexToRgba(o.neon || '#7ef0ff', 0.3);
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(x - w / 2, top, w, h - 16);
+    ctx.fillStyle = hexToRgba(o.neon || '#7ef0ff', 0.5);
+    ctx.fillRect(x - r * 0.5, y - 12, r, 2);
+  }
+
   function drawProp(o, time) {
     const type = o.typeKey;
     drawGroundShadow(o.x, o.y, o.r, 0.34);
@@ -3246,6 +3877,10 @@
       case 'hydrant': drawHydrant(o); break;
       case 'mailbox': drawMailbox(o); break;
       case 'cone': drawCone(o); break;
+      case 'barrel': drawBarrel(o); break;
+      case 'container': drawContainer(o, time); break;
+      case 'crane': drawCrane(o, time); break;
+      case 'holo': drawHolo(o, time); break;
       case 'car':
       case 'van':
       case 'bus': drawVehicle(o, time); break;
@@ -3487,12 +4122,14 @@
         flash: p.flash
       }, time);
     } else if (entry.kind === 'enemy') {
-      const e = game.enemy;
+      const e = entry.ref;
       if (!e) return;
       drawBlackHole(e.x, e.y, e.radius, {
         isEnemy: true,
         angle: e.angle,
-        pulse: e.pulse
+        pulse: e.pulse,
+        tint: e.tint,
+        tint2: e.tint2
       }, time);
     } else if (entry.kind === 'goal') {
       drawGoalTower(entry.ref, time);
@@ -3651,9 +4288,11 @@
     if (p && inView(p.x, p.y, p.radius, p.radius)) {
       entries.push({ kind: 'player', y: p.y, ref: p });
     }
-    const e = game.enemy;
-    if (e && inView(e.x, e.y, e.radius, e.radius)) {
-      entries.push({ kind: 'enemy', y: e.y, ref: e });
+    for (let i = 0; i < game.enemies.length; i++) {
+      const e = game.enemies[i];
+      if (inView(e.x, e.y, e.radius, e.radius)) {
+        entries.push({ kind: 'enemy', y: e.y, ref: e });
+      }
     }
     entries.sort((a, b) => a.y - b.y);
     for (let i = 0; i < entries.length; i++) {
@@ -3744,14 +4383,17 @@
         });
       }
     }
-    const e = game.enemy;
-    if (e && game.mode !== 'menu') {
+    const manyHunters = game.enemies.length > 1;
+    for (let i = 0; i < game.enemies.length; i++) {
+      const e = game.enemies[i];
+      if (!e || game.mode === 'menu') continue;
       const sp = worldToScreen(e.x, e.y);
       const off = e.radius * cam.zoom + 20;
       if (sp.x > margin && sp.x < W - margin && sp.y > margin && sp.y < H - margin) {
-        drawScreenPill(`猎手 LV.${e.level}`, sp.x, sp.y - off, '#ff5f7e', {
+        const text = manyHunters ? `猎手 ${e.index + 1} · LV.${e.level}` : `猎手 LV.${e.level}`;
+        drawScreenPill(text, sp.x, sp.y - off, e.tint || '#ff5f7e', {
           bg: 'rgba(20, 7, 13, 0.78)',
-          border: 'rgba(255, 80, 112, 0.3)',
+          border: hexToRgba(e.tint || '#ff5f7e', 0.34),
           size: 9
         });
       }
@@ -3863,21 +4505,41 @@
       const goalDist = dist(game.player.x, game.player.y, game.tower.x, game.tower.y);
       drawEdgeArrow(game.tower.x, game.tower.y, '#ffd36e', `高塔 ${fmtDist(goalDist)}`, 0, plates);
     }
-    if (game.enemy && !game.enemy.beingEaten && game.mode === 'playing') {
-      const e = game.enemy;
-      const d = dist(game.player.x, game.player.y, e.x, e.y);
-      if (d < 1800) drawEdgeArrow(e.x, e.y, '#ff5477', `猎手 ${fmtDist(d)}`, 1.3, plates);
+    if (game.player && game.mode === 'playing') {
+      let nearest = null;
+      let nearestDist = Infinity;
+      for (let i = 0; i < game.enemies.length; i++) {
+        const e = game.enemies[i];
+        if (!e || e.beingEaten) continue;
+        const d = dist(game.player.x, game.player.y, e.x, e.y);
+        if (d < nearestDist) {
+          nearest = e;
+          nearestDist = d;
+        }
+      }
+      if (nearest && nearestDist < 1800) {
+        const tag = game.enemies.length > 1 ? `猎手 ${nearest.index + 1} ${fmtDist(nearestDist)}` : `猎手 ${fmtDist(nearestDist)}`;
+        drawEdgeArrow(nearest.x, nearest.y, nearest.tint || '#ff5477', tag, 1.3, plates);
+      }
     }
     void time;
   }
 
   function drawScreenFX(time) {
     if (game.mode === 'menu') return;
-    const e = game.enemy;
     const p = game.player;
-    if (e && p && (game.mode === 'playing' || game.mode === 'dying')) {
-      const d = dist(p.x, p.y, e.x, e.y);
-      let danger = clamp(1 - d / 560, 0, 1);
+    let danger = 0;
+    if (p && (game.mode === 'playing' || game.mode === 'dying')) {
+      const source = game.mode === 'dying' ? game.killer : null;
+      if (source) {
+        danger = clamp(1 - dist(p.x, p.y, source.x, source.y) / 560, 0, 1);
+      } else {
+        for (let i = 0; i < game.enemies.length; i++) {
+          const e = game.enemies[i];
+          if (!e || e.beingEaten) continue;
+          danger = Math.max(danger, clamp(1 - dist(p.x, p.y, e.x, e.y) / 560, 0, 1));
+        }
+      }
       if (game.mode === 'dying') danger = Math.max(danger, 0.75);
       if (danger > 0.01) {
         const grad = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.22, W / 2, H / 2, Math.max(W, H) * 0.72);
@@ -4015,21 +4677,23 @@
       c.shadowBlur = 0;
     }
 
-    // Enemy.
-    const e = game.enemy;
-    if (e && !e.beingEaten) {
+    // Enemies.
+    for (let i = 0; i < game.enemies.length; i++) {
+      const e = game.enemies[i];
+      if (!e || e.beingEaten) continue;
       const ex = mx(e.x);
       const ey = my(e.y);
-      c.fillStyle = '#ff4f70';
-      c.shadowColor = '#ff4f70';
+      const tint = e.tint || '#ff4f70';
+      c.fillStyle = tint;
+      c.shadowColor = tint;
       c.shadowBlur = 10;
       c.beginPath();
       c.arc(ex, ey, 3.6, 0, TAU);
       c.fill();
-      c.strokeStyle = `rgba(255, 79, 112, ${0.2 + Math.sin(game.timeNow * 3) * 0.08})`;
+      c.strokeStyle = hexToRgba(tint, 0.24 + Math.sin(game.timeNow * 3) * 0.08);
       c.lineWidth = 1;
       c.beginPath();
-      c.arc(ex, ey, 7.5 + Math.sin(game.timeNow * 3) * 1.5, 0, TAU);
+      c.arc(ex, ey, 7.5 + Math.sin(game.timeNow * 3 + i) * 1.5, 0, TAU);
       c.stroke();
       c.shadowBlur = 0;
     }
@@ -4237,6 +4901,8 @@
     game,
     startGame,
     maps: MAPS,
+    render,
+    update,
     setLevel(level) {
       const p = game.player;
       if (!p) return;
