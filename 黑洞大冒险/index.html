@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- 背景音乐：进入游戏页面自动播放 -->
+  <audio id="bg-music" src="bg-music-loop.mp3" autoplay loop preload="auto"></audio>
+
   <main id="app">
     <canvas id="game" aria-label="黑洞大冒险游戏画面"></canvas>
     <div class="canvas-grain" aria-hidden="true"></div>
@@ -264,5 +267,65 @@
   </main>
 
   <script src="game.js"></script>
+  <script>
+    // 背景音乐：菜单/选关页面播放，进入游戏后停止（避免与游戏音效冲突）
+    (function () {
+      var audio = document.getElementById('bg-music');
+      if (!audio) return;
+      audio.volume = 0.25;
+      var inGame = false;
+
+      function tryPlay() {
+        if (inGame || !audio.paused) return;
+        var p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      }
+
+      function stopForGame() {
+        inGame = true;
+        audio.pause();
+        audio.currentTime = 0;
+      }
+
+      function resumeForMenu() {
+        inGame = false;
+        tryPlay();
+      }
+
+      // 页面加载后尝试自动播放（菜单阶段）
+      if (document.readyState === 'complete') tryPlay();
+      else window.addEventListener('load', tryPlay, { once: true });
+      tryPlay();
+
+      // 浏览器可能拦截未交互的有声自动播放：首次交互后在菜单阶段补播
+      ['pointerdown', 'keydown', 'touchstart', 'click'].forEach(function (evt) {
+        window.addEventListener(evt, function () {
+          if (!inGame) tryPlay();
+        }, { capture: true, passive: true });
+      });
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && !inGame) tryPlay();
+      });
+
+      // 进入游戏时停止背景音乐
+      var startBtn = document.getElementById('btn-start');
+      if (startBtn) startBtn.addEventListener('click', stopForGame);
+      window.addEventListener('keydown', function (e) {
+        if (e.code === 'Enter' && !inGame) stopForGame();
+      }, { capture: true });
+
+      var retryBtn = document.getElementById('btn-result-retry');
+      var nextBtn = document.getElementById('btn-result-next');
+      if (retryBtn) retryBtn.addEventListener('click', stopForGame);
+      if (nextBtn) nextBtn.addEventListener('click', stopForGame);
+
+      // 返回菜单时恢复背景音乐
+      var pauseMenuBtn = document.getElementById('btn-pause-menu');
+      var resultMenuBtn = document.getElementById('btn-result-menu');
+      if (pauseMenuBtn) pauseMenuBtn.addEventListener('click', resumeForMenu);
+      if (resultMenuBtn) resultMenuBtn.addEventListener('click', resumeForMenu);
+    })();
+  </script>
 </body>
 </html>
