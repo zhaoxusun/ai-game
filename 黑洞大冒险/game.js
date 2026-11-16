@@ -84,7 +84,8 @@
       id: 0,
       name: '霓虹旧城',
       en: 'NEON OLD TOWN',
-      tagline: '低矮街区、霓虹招牌，只有 1 个猎手，适合第一次扩张。',
+      tagline: '低矮街区、霓虹招牌，只有 1 个基础猎手，适合第一次扩张。',
+      features: { kind: 'neon' },
       seed: 0x1a2b3c4d,
       cols: 4,
       rows: 3,
@@ -97,6 +98,9 @@
       spawnCol: 2,
       spawnRow: 2,
       hunters: 1,
+      hunterTypes: ['basic'],
+      itemWeights: { magnet: 4, boost: 3, shield: 2, ghost: 1 },
+      starterItem: 'magnet',
       enemySpeed: 0.8,
       enemySpawnDist: 1040,
       majorTiers: [3, 3, 3, 4, 4, 4, 5, 5, 6, 7],
@@ -129,7 +133,9 @@
       id: 1,
       name: '钢铁港湾',
       en: 'IRON HARBOR',
-      tagline: '锈色码头与集装箱，2 个猎手巡逻，猎手更快。',
+      tagline: '锈色码头：油污拖慢脚步，重装猎手会直线逼近，吊钩横在路中央。',
+      features: { kind: 'harbor', oil: 5, movers: 3, hooks: 2 },
+      mechanicTip: '钢铁港湾：油污减速，货柜与吊钩会推开你，重装猎手会一路直追。',
       seed: 0x77c1e3a9,
       cols: 5,
       rows: 4,
@@ -142,6 +148,9 @@
       spawnCol: 2,
       spawnRow: 3,
       hunters: 2,
+      hunterTypes: ['basic', 'tank'],
+      itemWeights: { boost: 4, shield: 3, magnet: 2, ghost: 2 },
+      starterItem: 'shield',
       enemySpeed: 0.91,
       enemySpawnDist: 940,
       majorTiers: [3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 5],
@@ -181,7 +190,9 @@
       id: 2,
       name: '云端都会',
       en: 'SKYLINE METRO',
-      tagline: '高空玻璃都市，3 个猎手围猎，几乎与你同速。',
+      tagline: '高空玻璃都市：极速、智能与群猎手围猎，上升气流可短暂腾空。',
+      features: { kind: 'sky', gusts: 3, pads: 5 },
+      mechanicTip: '云端都会：上升气流可腾空躲避猎手，极速、智能、群猎会冲刺、预判、俯冲。',
       seed: 0xc0ffee42,
       cols: 6,
       rows: 4,
@@ -194,6 +205,9 @@
       spawnCol: 3,
       spawnRow: 3,
       hunters: 3,
+      hunterTypes: ['swift', 'smart', 'swarm'],
+      itemWeights: { ghost: 4, shield: 3, boost: 2, magnet: 1 },
+      starterItem: 'ghost',
       enemySpeed: 1.01,
       enemySpawnDist: 860,
       majorTiers: [3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7],
@@ -236,6 +250,148 @@
     { primary: '#2fd9b8', secondary: '#8ff6e6' },
     { primary: '#ffab2e', secondary: '#ffd79a' }
   ];
+
+  // Each map fields a different mix of hunters. Behaviour, size, speed and
+  // silhouette all come from here so the three maps stop feeling like reskins.
+  const HUNTER_TYPES = {
+    basic: {
+      key: 'basic',
+      label: '基础猎手',
+      short: '基础',
+      blurb: '标准巡逻',
+      tint: { primary: '#ff3b5c', secondary: '#ff8fa6' },
+      radiusMul: 1,
+      speedMul: 1,
+      turn: 2.8,
+      chaseRadius: 0,
+      fleeRange: 720,
+      shape: 'circle'
+    },
+    swift: {
+      key: 'swift',
+      label: '极速猎手',
+      short: '极速',
+      blurb: '高速冲刺',
+      tint: { primary: '#ffab2e', secondary: '#ffe0a8' },
+      radiusMul: 0.88,
+      speedMul: 0.98,
+      turn: 4.6,
+      chaseRadius: 900,
+      fleeRange: 780,
+      dashSpeed: 2.25,
+      dashTime: 0.55,
+      dashCooldown: 3.1,
+      shape: 'triangle'
+    },
+    tank: {
+      key: 'tank',
+      label: '重装猎手',
+      short: '重装',
+      blurb: '缓慢直追',
+      tint: { primary: '#ff6a3d', secondary: '#ffb693' },
+      radiusMul: 1.24,
+      speedMul: 0.74,
+      turn: 1.6,
+      chaseRadius: 940,
+      fleeRange: 620,
+      shape: 'square'
+    },
+    smart: {
+      key: 'smart',
+      label: '智能猎手',
+      short: '智能',
+      blurb: '预判拦截',
+      tint: { primary: '#2fd9b8', secondary: '#a9fff2' },
+      radiusMul: 0.96,
+      speedMul: 0.96,
+      turn: 3.6,
+      chaseRadius: 1000,
+      fleeRange: 980,
+      shape: 'diamond'
+    },
+    swarm: {
+      key: 'swarm',
+      label: '群猎手',
+      short: '群猎',
+      blurb: '环绕俯冲',
+      tint: { primary: '#ff5f8f', secondary: '#ffb9cf' },
+      radiusMul: 0.6,
+      speedMul: 1.12,
+      turn: 5,
+      chaseRadius: 720,
+      fleeRange: 640,
+      dashSpeed: 2.1,
+      dashTime: 0.42,
+      dashCooldown: 2.6,
+      groupSize: 3,
+      shape: 'dot'
+    }
+  };
+  const HUNTER_ORDER = ['basic', 'swift', 'tank', 'smart', 'swarm'];
+  const HUNTER_GRACE = 7;
+
+  // Four collectible buffs. Weights live per map so each level has its own
+  // signature item: magnet in the old town, shield in the harbor, ghost in
+  // the skyline.
+  const PICKUP_TYPES = {
+    shield: {
+      key: 'shield',
+      label: '护盾',
+      color: '#7fe9ff',
+      duration: 4.5,
+      hint: '4.5 秒内免疫猎手吞噬'
+    },
+    magnet: {
+      key: 'magnet',
+      label: '磁力',
+      color: '#ffd36e',
+      duration: 7,
+      hint: '7 秒内吸取附近可吞物体'
+    },
+    boost: {
+      key: 'boost',
+      label: '加速',
+      color: '#ff9a5c',
+      duration: 6,
+      hint: '6 秒内移动速度提升 35%'
+    },
+    ghost: {
+      key: 'ghost',
+      label: '隐匿',
+      color: '#c8a6ff',
+      duration: 5,
+      hint: '5 秒内猎手失去目标、停止追击'
+    }
+  };
+  const PICKUP_ORDER = ['shield', 'magnet', 'boost', 'ghost'];
+  const PICKUP_MAX = 5;
+
+  function hunterDef(e) {
+    return (e && e.typeDef) || HUNTER_TYPES.basic;
+  }
+
+  function hunterTag(e) {
+    const def = hunterDef(e);
+    if (!e) return '猎手';
+    if (e.groupSize > 1) return `${def.label} ${e.index + 1}-${e.memberIndex + 1}`;
+    return game.enemies.length > 1 ? `${def.label} ${e.index + 1}` : def.label;
+  }
+
+  function hunterCompLabel(list) {
+    const counts = {};
+    for (let i = 0; i < list.length; i++) {
+      const key = list[i].type || 'basic';
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return HUNTER_ORDER
+      .filter((key) => counts[key])
+      .map((key) => {
+        const n = counts[key];
+        const def = HUNTER_TYPES[key];
+        return n > 1 ? `${def.short}×${n}` : def.short;
+      })
+      .join(' + ');
+  }
 
   const BUILDINGS = {
     2: [
@@ -363,6 +519,12 @@
       });
     }
 
+    pickup() {
+      if (!this.enabled) return;
+      this.tone(620, 0.1, 'triangle', 0.06, 940);
+      window.setTimeout(() => this.tone(940, 0.14, 'sine', 0.05, 1380), 62);
+    }
+
     danger() {
       if (!this.enabled) return;
       this.tone(145, 0.22, 'sawtooth', 0.048, 92);
@@ -411,6 +573,9 @@
     threatPanel: $('threat-panel'),
     threatText: $('threat-text'),
     threatDistance: $('threat-distance'),
+    envPanel: $('env-panel'),
+    envText: $('env-text'),
+    buffPanel: $('buff-panel'),
     minimap: $('minimap'),
     minimapMap: $('minimap-map'),
     menu: $('screen-menu'),
@@ -449,6 +614,7 @@
   let ctx = dom.canvas.getContext('2d');
   const miniCtx = dom.minimap.getContext('2d');
   const mapCards = Array.from(document.querySelectorAll('.map-card'));
+  const buffChips = Array.from(document.querySelectorAll('.buff-chip'));
 
   let W = window.innerWidth;
   let H = window.innerHeight;
@@ -496,6 +662,10 @@
     tower: null,
     camera: { x: 0, y: 0, zoom: 1, shake: 0, shakeX: 0, shakeY: 0 },
     objects: [],
+    pickups: [],
+    pickupTimer: 0,
+    pickupNotice: {},
+    lastShieldBlock: -99,
     effects: [],
     particles: [],
     floaters: [],
@@ -849,10 +1019,292 @@
       spawn,
       tower,
       enemySpawns,
+      mech: generateMechanics(def, grid, spawn, tower, rng),
       width: grid.width,
       height: grid.height,
       palette: def.palette
     };
+  }
+
+  // ------------------------------------------------------------
+  // Per-map interactive mechanics (P1)
+  //   harbor: oil slicks, moving cargo containers, swinging crane hooks
+  //   sky:    wind corridors + updraft launch pads
+  // ------------------------------------------------------------
+  function generateMechanics(def, grid, spawn, tower, rng) {
+    const kind = (def.features && def.features.kind) || 'neon';
+    const mech = { kind, oil: [], gusts: [], pads: [], movers: [], hooks: [] };
+    if (kind !== 'harbor' && kind !== 'sky') return mech;
+    const f = def.features;
+    const rw = def.roadW;
+    const cw = grid.width;
+    const chh = grid.height;
+    const pad = 150;
+    const clearOf = (x, y, r, list) => {
+      if (dist(x, y, spawn.x, spawn.y) < r) return false;
+      if (dist(x, y, tower.x, tower.y) < r) return false;
+      for (let i = 0; i < list.length; i++) {
+        if (dist2(x, y, list[i].x, list[i].y) < r * r * 0.7) return false;
+      }
+      return true;
+    };
+    const randRoadX = () => pad + rng() * (cw - pad * 2);
+    const randRoadY = () => pad + rng() * (chh - pad * 2);
+    const innerRoadX = () => grid.xs[1 + ((rng() * (grid.xs.length - 2)) | 0)];
+    const innerRoadY = () => grid.ys[1 + ((rng() * (grid.ys.length - 2)) | 0)];
+
+    if (kind === 'harbor') {
+      const oilCount = f.oil || 5;
+      for (let n = 0; n < oilCount * 10 && mech.oil.length < oilCount; n++) {
+        const horizontal = rng() < 0.5;
+        const x = horizontal ? randRoadX() : innerRoadX();
+        const y = horizontal ? innerRoadY() : randRoadY();
+        if (!clearOf(x, y, 330, mech.oil)) continue;
+        const len = 92 + rng() * 96;
+        mech.oil.push({
+          x, y,
+          rx: len,
+          ry: rw * 0.44 + 4,
+          rot: horizontal ? 0 : Math.PI / 2,
+          phase: rng() * TAU
+        });
+      }
+
+      const moverCount = f.movers || 3;
+      for (let n = 0; n < moverCount * 12 && mech.movers.length < moverCount; n++) {
+        const horizontal = rng() < 0.5;
+        const line = horizontal ? innerRoadY() : innerRoadX();
+        const along = horizontal ? randRoadX() : randRoadY();
+        if (!clearOf(along, line, 360, mech.movers)) continue;
+        const dir = rng() < 0.5 ? -1 : 1;
+        const span = 240 + rng() * 210;
+        const x = horizontal ? clamp(along, pad + span, cw - pad - span) : line;
+        const y = horizontal ? line : clamp(along, pad + span, chh - pad - span);
+        if (!clearOf(x, y, 360, mech.movers)) continue;
+        const prop = makeProp('container', x, y, rng, true);
+        prop.angle = horizontal ? 0 : Math.PI / 2;
+        prop.slideX = horizontal ? 1 : 0;
+        prop.slideY = horizontal ? 0 : 1;
+        prop.travel = span;
+        prop.speed = 62 + rng() * 34;
+        prop.t = rng() * TAU;
+        mech.movers.push(prop);
+      }
+
+      const hookCount = f.hooks || 2;
+      for (let n = 0; n < hookCount * 12 && mech.hooks.length < hookCount; n++) {
+        const horizontal = rng() < 0.5;
+        const x = horizontal ? randRoadX() : innerRoadX();
+        const y = horizontal ? innerRoadY() : randRoadY();
+        if (!clearOf(x, y, 400, mech.hooks)) continue;
+        mech.hooks.push({
+          x, y,
+          span: 214,
+          height: 186,
+          len: 128,
+          amp: 90,
+          phase: rng() * TAU,
+          speed: 0.62 + rng() * 0.36,
+          cool: 0
+        });
+      }
+    } else if (kind === 'sky') {
+      const gustCount = f.gusts || 3;
+      for (let n = 0; n < gustCount * 12 && mech.gusts.length < gustCount; n++) {
+        const horizontal = rng() < 0.5;
+        const dir = rng() < 0.5 ? -1 : 1;
+        const long = 330 + rng() * 190;
+        const wide = 96 + rng() * 44;
+        const x = horizontal ? randRoadX() : innerRoadX();
+        const y = horizontal ? innerRoadY() : randRoadY();
+        if (!clearOf(x, y, 320, mech.gusts)) continue;
+        mech.gusts.push({
+          x, y,
+          w: horizontal ? long : wide,
+          h: horizontal ? wide : long,
+          dx: horizontal ? dir : 0,
+          dy: horizontal ? 0 : dir,
+          strength: 132 + rng() * 26,
+          phase: rng() * TAU
+        });
+      }
+
+      const padCount = f.pads || 5;
+      for (let n = 0; n < padCount * 14 && mech.pads.length < padCount; n++) {
+        const x = innerRoadX();
+        const y = innerRoadY();
+        if (!clearOf(x, y, 300, mech.pads)) continue;
+        mech.pads.push({ x, y, r: 46, cool: 0, phase: rng() * TAU });
+      }
+    }
+    return mech;
+  }
+
+  // Active wind corridor at a world point, or null.
+  function windAt(x, y) {
+    const mech = game.world && game.world.mech;
+    if (!mech || !mech.gusts.length) return null;
+    for (let i = 0; i < mech.gusts.length; i++) {
+      const g = mech.gusts[i];
+      if (Math.abs(x - g.x) <= g.w / 2 && Math.abs(y - g.y) <= g.h / 2) return g;
+    }
+    return null;
+  }
+
+  function pointInOil(x, y) {
+    const mech = game.world && game.world.mech;
+    if (!mech || !mech.oil.length) return null;
+    for (let i = 0; i < mech.oil.length; i++) {
+      const o = mech.oil[i];
+      const cos = Math.cos(o.rot);
+      const sin = Math.sin(o.rot);
+      const lx = (x - o.x) * cos + (y - o.y) * sin;
+      const ly = -(x - o.x) * sin + (y - o.y) * cos;
+      if ((lx * lx) / (o.rx * o.rx) + (ly * ly) / (o.ry * o.ry) <= 1) return o;
+    }
+    return null;
+  }
+
+  // ------------------------------------------------------------
+  // Collectible buffs (P3)
+  // ------------------------------------------------------------
+  function pickupWeightedType(def) {
+    const weights = (def && def.itemWeights) || null;
+    if (!weights) return PICKUP_ORDER[(Math.random() * PICKUP_ORDER.length) | 0];
+    let total = 0;
+    for (let i = 0; i < PICKUP_ORDER.length; i++) {
+      total += Math.max(0, weights[PICKUP_ORDER[i]] || 0);
+    }
+    if (total <= 0) return PICKUP_ORDER[(Math.random() * PICKUP_ORDER.length) | 0];
+    let roll = Math.random() * total;
+    for (let i = 0; i < PICKUP_ORDER.length; i++) {
+      const key = PICKUP_ORDER[i];
+      roll -= Math.max(0, weights[key] || 0);
+      if (roll <= 0) return key;
+    }
+    return PICKUP_ORDER[0];
+  }
+
+  function pickupSpotClear(x, y) {
+    const world = game.world;
+    if (!world) return false;
+    if (x < 150 || y < 150 || x > world.width - 150 || y > world.height - 150) return false;
+    const tower = game.tower;
+    if (tower && dist(x, y, tower.x, tower.y) < 340) return false;
+    // Keep the relic out of tower/building bases and away from other relics.
+    for (let i = 0; i < game.objects.length; i++) {
+      const o = game.objects[i];
+      if (o.eaten || (o.kind !== 'building' && o.kind !== 'goal')) continue;
+      if (dist(x, y, o.x, o.y) < o.r * 1.15 + 34) return false;
+    }
+    for (let i = 0; i < game.pickups.length; i++) {
+      if (dist(x, y, game.pickups[i].x, game.pickups[i].y) < 150) return false;
+    }
+    return true;
+  }
+
+  function spawnPickup(typeKey, nearX, nearY, minDist, maxDist) {
+    const p = game.player;
+    const world = game.world;
+    if (!p || !world) return null;
+    const key = PICKUP_TYPES[typeKey] ? typeKey : pickupWeightedType(game.map);
+    const def = PICKUP_TYPES[key];
+    const cx = nearX == null ? p.x : nearX;
+    const cy = nearY == null ? p.y : nearY;
+    const minD = minDist == null ? 520 : minDist;
+    const maxD = maxDist == null ? 980 : maxDist;
+    let spot = null;
+    for (let attempt = 0; attempt < 52; attempt++) {
+      const a = Math.random() * TAU;
+      const rr = minD + Math.random() * Math.max(1, maxD - minD);
+      const x = clamp(cx + Math.cos(a) * rr, 150, world.width - 150);
+      const y = clamp(cy + Math.sin(a) * rr, 150, world.height - 150);
+      if (!pickupSpotClear(x, y)) continue;
+      spot = { x, y };
+      break;
+    }
+    if (!spot) {
+      // Relaxed fallback: still inside the arena and away from the tower.
+      const a = Math.random() * TAU;
+      spot = {
+        x: clamp(cx + Math.cos(a) * maxD, 150, world.width - 150),
+        y: clamp(cy + Math.sin(a) * maxD, 150, world.height - 150)
+      };
+    }
+    const pk = {
+      kind: 'pickup',
+      type: def.key,
+      x: spot.x,
+      y: spot.y,
+      r: 24,
+      age: 0,
+      life: 46,
+      phase: Math.random() * TAU,
+      spawnT: 0
+    };
+    game.pickups.push(pk);
+    return pk;
+  }
+
+  function collectPickup(pk, index) {
+    const p = game.player;
+    if (!p) return;
+    const def = PICKUP_TYPES[pk.type] || PICKUP_TYPES.shield;
+    const timerKey = def.key + 'T';
+    p[timerKey] = Math.max(p[timerKey] || 0, def.duration);
+    if (def.key === 'boost') p.pulse = Math.max(p.pulse, 0.45);
+    game.pickups.splice(index, 1);
+    addFloater(p.x, p.y - p.radius - 30, `${def.label} ${def.duration}s`, def.color, 15);
+    spawnShockwave(pk.x, pk.y, 14, 104, hexToRgba(def.color, 0.78), 0.6);
+    spawnBurst(pk.x, pk.y, 28, def.color, 170, 2.5);
+    sound.pickup();
+    if (!game.pickupNotice[def.key]) {
+      game.pickupNotice[def.key] = true;
+      showToast(`${def.label}：${def.hint}`, 'good', 3400);
+    }
+    updateHUD();
+  }
+
+  function updatePickups(dt) {
+    const p = game.player;
+    if (!p) return;
+    for (let i = game.pickups.length - 1; i >= 0; i--) {
+      const pk = game.pickups[i];
+      pk.age += dt;
+      pk.spawnT = Math.min(1, (pk.spawnT || 0) + dt * 3.2);
+      if (pk.age >= pk.life) {
+        spawnBurst(pk.x, pk.y, 8, hexToRgba((PICKUP_TYPES[pk.type] || PICKUP_TYPES.shield).color, 0.7), 70, 1.4);
+        game.pickups.splice(i, 1);
+        continue;
+      }
+      if (Math.random() < dt * 1.6) {
+        const def = PICKUP_TYPES[pk.type] || PICKUP_TYPES.shield;
+        const a = Math.random() * TAU;
+        game.particles.push({
+          x: pk.x + Math.cos(a) * pk.r * 1.1,
+          y: pk.y + Math.sin(a) * pk.r * 0.5,
+          vx: (Math.random() * 2 - 1) * 14,
+          vy: -24 - Math.random() * 34,
+          life: 0.45 + Math.random() * 0.45,
+          maxLife: 0.9,
+          size: 0.8 + Math.random() * 1.3,
+          color: def.color,
+          drag: 0.14,
+          gravity: 0,
+          glow: true
+        });
+      }
+      const reach = p.radius * 0.96 + pk.r * 0.9;
+      if (dist(p.x, p.y, pk.x, pk.y) <= reach) collectPickup(pk, i);
+    }
+
+    game.pickupTimer -= dt;
+    if (game.pickupTimer <= 0) {
+      if (game.pickups.length < PICKUP_MAX) {
+        spawnPickup(pickupWeightedType(game.map), p.x, p.y, 520, 980);
+      }
+      game.pickupTimer = 9 + Math.random() * 4;
+    }
   }
 
   function pickEnemySpawns(def, grid, spawn, tower, count) {
@@ -928,29 +1380,61 @@
       pulse: 0,
       flash: 0,
       beingEaten: false,
-      swallowed: 0
+      swallowed: 0,
+      slowT: 0,
+      liftT: 0,
+      stunT: 0,
+      shieldT: 0,
+      magnetT: 0,
+      boostT: 0,
+      ghostT: 0,
+      envText: '',
+      envTone: ''
     };
   }
 
-  function createEnemy(spawn, level, def, index) {
-    const tint = ENEMY_TINTS[index % ENEMY_TINTS.length];
+  function createEnemy(spawn, level, def, index, typeKey, memberIndex, groupSize) {
+    const type = HUNTER_TYPES[typeKey] ? typeKey : 'basic';
+    const typeDef = HUNTER_TYPES[type];
+    const tint = typeDef.tint || ENEMY_TINTS[index % ENEMY_TINTS.length];
+    const baseRadius = LEVEL_RADII[level - 1] * typeDef.radiusMul;
     return {
       x: spawn.x,
       y: spawn.y,
       vx: 0,
       vy: 0,
-      radius: LEVEL_RADII[level - 1],
-      targetRadius: LEVEL_RADII[level - 1],
+      radius: baseRadius,
+      targetRadius: baseRadius,
       level,
       angle: Math.PI,
+      moveAngle: Math.PI,
       pulse: 0,
       flash: 0,
       waypoint: null,
       retarget: 0,
-      speedFactor: def.enemySpeed,
+      speedFactor: def.enemySpeed * typeDef.speedMul,
       index: index || 0,
+      type,
+      typeDef,
+      radiusMul: typeDef.radiusMul,
+      turnDamp: typeDef.turn,
       tint: tint.primary,
       tint2: tint.secondary,
+      memberIndex: memberIndex || 0,
+      groupSize: groupSize || 1,
+      dashT: 0,
+      dashCd: 1.2 + Math.random() * 1.5,
+      dashX: spawn.x,
+      dashY: spawn.y,
+      windup: 0,
+      pendingDash: false,
+      diveT: 0,
+      diveCd: 1.4 + Math.random() * 1.6,
+      diveX: spawn.x,
+      diveY: spawn.y,
+      orbitA: Math.random() * TAU,
+      orbitR: 250 + (memberIndex || 0) * 58,
+      orbitDir: Math.random() < 0.5 ? -1 : 1,
       beingEaten: false,
       swallowed: 0,
       frozen: false
@@ -1114,19 +1598,51 @@
           nearestDist = d;
         }
       }
+      const graceLeft = HUNTER_GRACE - game.runTime;
+      let distanceText = fmtDist(nearestDist);
+      dom.threatPanel.style.setProperty('--threat-tint', nearest.tint || '#ff4468');
       dom.threatPanel.classList.toggle('is-safe', p.level >= 11);
-      if (p.level >= 11) {
+      if (graceLeft > 0 && game.mode === 'playing') {
+        dom.threatText.textContent = `猎手 ${Math.ceil(graceLeft)}s 后开始狩猎`;
+        distanceText = '';
+      } else if (p.level >= 11) {
         dom.threatText.textContent = alive.length > 1 ? `可反杀猎手 ×${alive.length}` : '可反杀猎手';
       } else if (nearestDist < 420) {
-        dom.threatText.textContent = alive.length > 1 ? `猎手 ×${alive.length} 正在靠近` : '猎手正在靠近';
+        dom.threatText.textContent = alive.length > 1 ? `猎手 ×${alive.length} 靠近` : `${hunterDef(nearest).short} 靠近`;
       } else {
-        dom.threatText.textContent = alive.length > 1 ? `猎手 ×${alive.length} 游荡中` : `猎手 LV.${nearest.level} 游荡中`;
+        dom.threatText.textContent = alive.length > 1 ? `猎手 ×${alive.length} 游荡` : `${hunterDef(nearest).short} 游荡`;
       }
-      dom.threatDistance.textContent = fmtDist(nearestDist);
+      dom.threatDistance.textContent = distanceText;
       dom.threatPanel.classList.remove('is-hidden');
     } else {
       dom.threatPanel.classList.add('is-hidden');
     }
+
+    if (dom.envPanel) {
+      const showEnv = game.mode === 'playing' && !!p.envText;
+      dom.envPanel.classList.toggle('is-hidden', !showEnv);
+      if (showEnv) {
+        dom.envText.textContent = p.envText;
+        dom.envPanel.classList.remove('is-cyan', 'is-warn', 'is-danger');
+        if (p.envTone) dom.envPanel.classList.add(p.envTone);
+      }
+    }
+
+    let anyBuff = false;
+    for (let i = 0; i < buffChips.length; i++) {
+      const chip = buffChips[i];
+      const key = chip.dataset.buff;
+      const left = p[key + 'T'] || 0;
+      const on = left > 0 && game.mode === 'playing';
+      chip.classList.toggle('is-on', on);
+      chip.classList.toggle('is-hidden', !on);
+      if (on) {
+        anyBuff = true;
+        const timer = chip.querySelector('b');
+        if (timer) timer.textContent = left.toFixed(1) + 's';
+      }
+    }
+    if (dom.buffPanel) dom.buffPanel.classList.toggle('is-hidden', !anyBuff);
   }
 
   function startGame(mapId) {
@@ -1146,7 +1662,26 @@
     const world = generateMap(MAPS[id]);
     const player = createPlayer(world.spawn);
     const enemyLevel = Math.min(10, player.level + 3);
-    const enemies = world.enemySpawns.map((sp, i) => createEnemy(sp, enemyLevel, MAPS[id], i));
+    const typeList = Array.isArray(MAPS[id].hunterTypes) && MAPS[id].hunterTypes.length
+      ? MAPS[id].hunterTypes
+      : ['basic'];
+    const enemies = [];
+    for (let i = 0; i < world.enemySpawns.length; i++) {
+      const sp = world.enemySpawns[i];
+      const typeKey = typeList[i % typeList.length];
+      const typeDef = HUNTER_TYPES[typeKey] || HUNTER_TYPES.basic;
+      if (typeDef.groupSize > 1) {
+        for (let m = 0; m < typeDef.groupSize; m++) {
+          const a = (m / typeDef.groupSize) * TAU;
+          enemies.push(createEnemy({
+            x: clamp(sp.x + Math.cos(a) * 118, 140, world.width - 140),
+            y: clamp(sp.y + Math.sin(a) * 118, 140, world.height - 140)
+          }, enemyLevel, MAPS[id], i, typeDef.key, m, typeDef.groupSize));
+        }
+      } else {
+        enemies.push(createEnemy(sp, enemyLevel, MAPS[id], i, typeDef.key, 0, 1));
+      }
+    }
 
     game.map = MAPS[id];
     game.world = world;
@@ -1158,6 +1693,10 @@
     game.effects = [];
     game.particles = [];
     game.floaters = [];
+    game.pickups = [];
+    game.pickupTimer = 8 + Math.random() * 4;
+    game.pickupNotice = {};
+    game.lastShieldBlock = -99;
     game.camera.x = player.x;
     game.camera.y = player.y;
     game.camera.zoom = getTargetZoom(player);
@@ -1174,6 +1713,7 @@
     game.levelUpCooldown = 0;
     game.lastHintAt = -99;
     game.lastDangerBeep = -99;
+    game.graceAnnounced = false;
     game.result = null;
     game.mode = 'playing';
     game.started = true;
@@ -1186,6 +1726,14 @@
     setHUDVisible(true);
     updateSoundButton();
     updateHUD();
+
+    // Two relics at the start: the map's signature item plus one weighted roll.
+    const starterKey = MAPS[id].starterItem || pickupWeightedType(MAPS[id]);
+    let secondKey = pickupWeightedType(MAPS[id]);
+    for (let n = 0; n < 6 && secondKey === starterKey; n++) secondKey = pickupWeightedType(MAPS[id]);
+    spawnPickup(starterKey, player.x, player.y, 380, 820);
+    spawnPickup(secondKey, player.x, player.y, 380, 820);
+
     drawMinimap();
 
     window.setTimeout(() => {
@@ -1193,13 +1741,15 @@
     }, 600);
     window.setTimeout(() => {
       if (game.mode === 'playing') {
-        showToast('吃掉比你小的物体，向 30 层高塔前进。', 'good', 3600);
+        const tip = MAPS[id].mechanicTip;
+        if (tip) showToast(tip, 'cyan', 4800);
+        else showToast('吃掉比你小的物体，向 30 层高塔前进。', 'good', 3600);
       }
     }, 950);
     window.setTimeout(() => {
       if (game.mode === 'playing') {
-        const label = enemies.length > 1 ? `${enemies.length} 个猎手黑洞 LV.${enemyLevel}` : `猎手黑洞 LV.${enemyLevel}`;
-        showToast(`${label} 已进入街区，小心被完全罩住。`, 'danger', 4200);
+        const label = `${hunterCompLabel(enemies)} 已进入街区（LV.${enemyLevel}）`;
+        showToast(`${label}，小心被完全罩住。`, 'danger', 4200);
       }
     }, 3900);
   }
@@ -1210,6 +1760,7 @@
     needsRender = true;
     document.body.classList.remove('is-playing');
     hideHint();
+    if (dom.buffPanel) dom.buffPanel.classList.add('is-hidden');
     dom.pauseLevel.textContent = game.player ? `LV.${game.player.level}` : 'LV.1';
     dom.pauseTime.textContent = formatTime(game.runTime);
     dom.toastLayer.classList.add('is-hidden');
@@ -1238,6 +1789,7 @@
     game.killer = null;
     game.tower = null;
     game.objects = [];
+    game.pickups = [];
     game.effects = [];
     game.particles = [];
     game.floaters = [];
@@ -1270,13 +1822,14 @@
     const best = bestForMap(game.selectedMap);
     game.result = { victory, reason, isNewRecord, best };
 
+    const killerName = game.killer ? hunterDef(game.killer).label : '猎手黑洞';
     dom.resultCard.classList.toggle('is-loss', !victory);
     dom.resultKicker.textContent = victory ? 'RUN COMPLETE' : 'RUN TERMINATED';
     dom.resultEmblem.textContent = victory ? '◎' : '×';
-    dom.resultTitle.textContent = victory ? '吞噬高塔！' : '被猎手吞噬';
+    dom.resultTitle.textContent = victory ? '吞噬高塔！' : `被${killerName}吞噬`;
     dom.resultSub.textContent = victory
       ? '整座城市的灯光，都落进了你的事件视界。'
-      : '你的黑洞被完整罩住。下一次，别让猎手贴得太近。';
+      : `${killerName}完全罩住了你。下一次，别让它贴得太近。`;
     dom.resultLevel.textContent = `LV.${game.player.level}`;
     dom.resultScore.textContent = fmtInt(game.player.score);
     dom.resultTime.textContent = formatTime(game.finalTime);
@@ -1709,7 +2262,7 @@
       if (enemy.beingEaten) continue;
       if (targetLevel > enemy.level) {
         enemy.level = targetLevel;
-        enemy.targetRadius = LEVEL_RADII[targetLevel - 1];
+        enemy.targetRadius = LEVEL_RADII[targetLevel - 1] * (enemy.radiusMul || 1);
         enemy.pulse = 1;
         upgraded++;
       }
@@ -1818,7 +2371,7 @@
     input.keys.clear();
     hideHint();
     addShake(1.15);
-    const killedBy = game.enemies.length > 1 ? `猎手 ${enemy.index + 1}` : '猎手黑洞';
+    const killedBy = hunterTag(enemy);
     spawnBurst(game.player.x, game.player.y, 45, enemy.tint || '#ff3b5c', 180, 3.4);
     spawnShockwave(enemy.x, enemy.y, enemy.radius * 0.5, enemy.radius * 2.2, hexToRgba(enemy.tint || '#ff3b5c', 0.62), 1.2);
     showToast(`你被${killedBy}完全罩住了。`, 'danger', 2200);
@@ -1832,7 +2385,7 @@
     addShake(0.65);
     spawnShockwave(e.x, e.y, e.radius * 0.5, e.radius * 2.4, 'rgba(92, 234, 255, 0.62)', 1.2);
     spawnBurst(e.x, e.y, 55, e.tint2 || '#73efff', 230, 3.8);
-    const label = game.enemies.length > 1 ? `反杀！猎手 ${e.index + 1} 正在被拖入你的事件视界。` : '反杀！猎手正在被拖入你的事件视界。';
+    const label = `反杀！${hunterTag(e)} 正在被拖入你的事件视界。`;
     showToast(label, 'cyan', 3200);
     sound.levelUp();
   }
@@ -1869,19 +2422,134 @@
     if (!p || p.beingEaten) return;
     const move = movementVector();
     const zoom = game.camera.zoom || 1;
-    const speed = 344 / Math.max(0.33, zoom);
+
+    p.slowT = Math.max(0, (p.slowT || 0) - dt);
+    p.liftT = Math.max(0, (p.liftT || 0) - dt);
+    p.stunT = Math.max(0, (p.stunT || 0) - dt);
+    p.shieldT = Math.max(0, (p.shieldT || 0) - dt);
+    p.magnetT = Math.max(0, (p.magnetT || 0) - dt);
+    p.boostT = Math.max(0, (p.boostT || 0) - dt);
+    p.ghostT = Math.max(0, (p.ghostT || 0) - dt);
+
+    const airborne = p.liftT > 0;
+    const oil = airborne ? null : pointInOil(p.x, p.y);
+    if (oil) p.slowT = 0.18;
+    let speedMul = 1;
+    if (oil) speedMul *= 0.55;
+    if (airborne) speedMul *= 2.15;
+    if (p.stunT > 0) speedMul *= 0.22;
+    if (p.boostT > 0) speedMul *= 1.35;
+    const speed = 344 / Math.max(0.33, zoom) * speedMul;
     const targetVx = move.x * speed;
     const targetVy = move.y * speed;
     p.vx = damp(p.vx, targetVx, 12, dt);
     p.vy = damp(p.vy, targetVy, 12, dt);
     p.x += p.vx * dt;
     p.y += p.vy * dt;
+
+    // Magnet pulls edible props/small buildings into the event horizon.
+    if (p.magnetT > 0) {
+      const reach = 260 + p.radius * 2.6;
+      for (let i = 0; i < game.objects.length; i++) {
+        const o = game.objects[i];
+        if (o.eaten || o.goal || o.r >= p.radius * 0.985) continue;
+        const dx = p.x - o.x;
+        const dy = p.y - o.y;
+        const d = Math.hypot(dx, dy);
+        if (d > reach || d < 1) continue;
+        const pull = (210 + 460 * (1 - d / reach)) * dt;
+        o.x += (dx / d) * pull;
+        o.y += (dy / d) * pull;
+      }
+    }
+
+    // Wind corridors drag the player (hunters are pushed too, but weaker).
+    if (!airborne) {
+      const flow = windAt(p.x, p.y);
+      if (flow) {
+        p.x += flow.dx * flow.strength * dt;
+        p.y += flow.dy * flow.strength * dt;
+      }
+    }
+
+    // Updraft pads: launch into a short airborne dash.
+    const mech = game.world.mech;
+    if (mech && mech.pads.length && !airborne && p.stunT <= 0) {
+      for (let i = 0; i < mech.pads.length; i++) {
+        const pad = mech.pads[i];
+        if (pad.cool > 0) continue;
+        if (dist(p.x, p.y, pad.x, pad.y) > pad.r * 0.88) continue;
+        pad.cool = 3.4;
+        p.liftT = 1.2;
+        p.stunT = 0;
+        p.pulse = Math.max(p.pulse, 0.5);
+        addShake(0.1);
+        spawnShockwave(pad.x, pad.y, 18, 132, 'rgba(120, 240, 255, 0.6)', 0.6);
+        spawnBurst(pad.x, pad.y, 26, '#9df5ff', 150, 2.2);
+        addFloater(p.x, p.y - p.radius - 26, '上升气流', '#a8f6ff', 13);
+        sound.tone(300, 0.34, 'sine', 0.08, 720);
+        break;
+      }
+    }
+
+    // Moving cargo containers shove a smaller hole aside; a bigger one eats them.
+    if (mech && mech.movers.length && !airborne) {
+      for (let i = 0; i < mech.movers.length; i++) {
+        const m = mech.movers[i];
+        if (m.eaten) continue;
+        const mdx = p.x - m.x;
+        const mdy = p.y - m.y;
+        const md = Math.hypot(mdx, mdy);
+        const minD = p.radius * 0.6 + m.r * 0.94;
+        if (md >= minD) continue;
+        if (p.radius > m.r * 1.45) {
+          eatObject(m);
+          continue;
+        }
+        const nx = md > 0.001 ? mdx / md : Math.cos(p.angle);
+        const ny = md > 0.001 ? mdy / md : Math.sin(p.angle);
+        p.x = m.x + nx * minD;
+        p.y = m.y + ny * minD;
+        const shove = Math.max(240, Math.hypot(p.vx, p.vy) * 0.9);
+        p.vx = nx * shove;
+        p.vy = ny * shove;
+        p.stunT = Math.max(p.stunT, 0.16);
+        if (performance.now() - game.lastDangerBeep > 1400) {
+          game.lastDangerBeep = performance.now();
+          sound.danger();
+        }
+        addShake(0.08);
+      }
+    }
+
     p.x = clamp(p.x, 24, game.world.width - 24);
     p.y = clamp(p.y, 24, game.world.height - 24);
     p.angle += dt * (0.35 + p.radius * 0.004);
     p.pulse = Math.max(0, p.pulse - dt * 2.8);
     p.flash = Math.max(0, p.flash - dt * 2.4);
     p.radius = damp(p.radius, p.targetRadius, 7.5, dt);
+
+    // Environment readout for the small HUD pill.
+    let envText = '';
+    let envTone = '';
+    if (p.liftT > 0) {
+      envText = '上升气流 · 腾空无视猎手';
+      envTone = 'is-cyan';
+    } else if (p.stunT > 0) {
+      envText = '被撞击 · 短暂失控';
+      envTone = 'is-danger';
+    } else if (oil) {
+      envText = '油污区 · 移动减速';
+      envTone = 'is-warn';
+    } else {
+      const flow = windAt(p.x, p.y);
+      if (flow) {
+        envText = '风场 · 顺风推进';
+        envTone = 'is-cyan';
+      }
+    }
+    p.envText = envText;
+    p.envTone = envTone;
   }
 
   function updateEnemies(dt) {
@@ -1890,6 +2558,102 @@
     for (let i = 0; i < list.length; i++) {
       updateEnemy(dt, list[i]);
     }
+  }
+
+  // Animated hazards: cargo containers slide along their route, crane hooks
+  // swing across the street, updraft pads recharge.
+  function updateMechanics(dt) {
+    if (!game.world || !game.player) return;
+    const mech = game.world.mech;
+    if (!mech) return;
+    const time = game.timeNow;
+    const p = game.player;
+
+    for (let i = 0; i < mech.movers.length; i++) {
+      const m = mech.movers[i];
+      if (m.eaten) continue;
+      m.t += dt * (m.speed / Math.max(40, m.travel));
+      const swing = Math.sin(m.t);
+      if (m.slideX) {
+        m.x = m.ox + swing * m.travel;
+      } else {
+        m.y = m.oy + swing * m.travel;
+      }
+    }
+
+    for (let i = 0; i < mech.pads.length; i++) {
+      const pad = mech.pads[i];
+      if (pad.cool > 0) pad.cool = Math.max(0, pad.cool - dt);
+      if (pad.cool <= 0 && p && dist(p.x, p.y, pad.x, pad.y) < 900 && Math.random() < dt * 5) {
+        game.particles.push({
+          x: pad.x + (Math.random() * 2 - 1) * pad.r * 0.7,
+          y: pad.y + (Math.random() * 2 - 1) * pad.r * 0.3,
+          vx: (Math.random() * 2 - 1) * 14,
+          vy: -46 - Math.random() * 52,
+          life: 0.5 + Math.random() * 0.5,
+          maxLife: 1,
+          size: 0.8 + Math.random() * 1.4,
+          color: '#8ff0ff',
+          drag: 0.1,
+          gravity: 0,
+          glow: true
+        });
+      }
+    }
+
+    for (let i = 0; i < mech.hooks.length; i++) {
+      const h = mech.hooks[i];
+      if (h.cool > 0) h.cool = Math.max(0, h.cool - dt);
+      const swing = Math.sin(time * h.speed + h.phase);
+      const hx = h.x + swing * h.amp;
+      const hy = h.y - 12;
+      if (Math.random() < dt * 2 && p && dist(p.x, p.y, h.x, h.y) < 900) {
+        game.particles.push({
+          x: hx + (Math.random() * 2 - 1) * 10,
+          y: hy - 26 + Math.random() * 12,
+          vx: (Math.random() * 2 - 1) * 12,
+          vy: -10 - Math.random() * 18,
+          life: 0.35 + Math.random() * 0.3,
+          maxLife: 0.65,
+          size: 0.7 + Math.random(),
+          color: '#ffcf7a',
+          drag: 0.2,
+          gravity: 0,
+          glow: true
+        });
+      }
+      if (!p || p.liftT > 0 || h.cool > 0) continue;
+      const hitR = p.radius * 0.42 + 30;
+      if (dist(p.x, p.y, hx, hy) > hitR) continue;
+      h.cool = 1.6;
+      let dx = p.x - hx;
+      let dy = p.y - hy;
+      if (Math.hypot(dx, dy) < 0.5) {
+        dx = Math.cos(p.angle);
+        dy = Math.sin(p.angle);
+      }
+      const dl = Math.max(1, Math.hypot(dx, dy));
+      p.vx += (dx / dl) * 560;
+      p.vy += (dy / dl) * 560;
+      p.stunT = Math.max(p.stunT, 0.5);
+      addShake(0.22);
+      sound.danger();
+      addFloater(p.x, p.y - p.radius - 22, '吊钩撞击', '#ffcf8a', 13);
+      spawnShockwave(hx, hy, 12, 108, 'rgba(255, 190, 92, 0.6)', 0.45);
+    }
+  }
+
+  function beginSwiftDash(e, p) {
+    const tx = p.x + p.vx * 0.4;
+    const ty = p.y + p.vy * 0.4;
+    const a = Math.atan2(ty - e.y, tx - e.x);
+    e.dashX = e.x + Math.cos(a) * 980;
+    e.dashY = e.y + Math.sin(a) * 980;
+    e.dashT = e.typeDef.dashTime;
+    e.dashCd = e.typeDef.dashCooldown;
+    e.pendingDash = false;
+    e.windup = 0;
+    spawnShockwave(e.x, e.y, e.radius * 0.4, e.radius * 2.2, hexToRgba(e.tint, 0.5), 0.42);
   }
 
   function updateEnemy(dt, e) {
@@ -1912,46 +2676,155 @@
       return;
     }
 
+    const def = hunterDef(e);
     const dToPlayer = dist(e.x, e.y, p.x, p.y);
+    const ghosted = (p.ghostT || 0) > 0;
     const playerIsBigger = p.level >= 11 && p.radius > e.radius * 1.02;
-    const fleeing = playerIsBigger && dToPlayer < 720;
-    const speed = (330 * e.speedFactor * (fleeing ? 0.87 : 1)) / Math.max(0.34, game.camera.zoom);
+    const fleeing = !ghosted && playerIsBigger && dToPlayer < (def.fleeRange || 720);
+    const grace = game.runTime < HUNTER_GRACE;
+    const wasDiving = e.diveT > 0;
 
-    e.retarget -= dt;
-    if (!e.waypoint || e.retarget <= 0 || dist(e.x, e.y, e.waypoint.x, e.waypoint.y) < 34) {
-      let wx;
-      let wy;
-      if (fleeing) {
-        const ang = Math.atan2(e.y - p.y, e.x - p.x) + (Math.random() * 0.7 - 0.35);
-        wx = clamp(e.x + Math.cos(ang) * 760, 130, game.world.width - 130);
-        wy = clamp(e.y + Math.sin(ang) * 760, 130, game.world.height - 130);
-        e.retarget = 0.65 + Math.random() * 0.55;
-      } else {
+    e.dashCd = Math.max(0, (e.dashCd || 0) - dt);
+    e.diveCd = Math.max(0, (e.diveCd || 0) - dt);
+    e.dashT = Math.max(0, (e.dashT || 0) - dt);
+    e.diveT = Math.max(0, (e.diveT || 0) - dt);
+    e.windup = Math.max(0, (e.windup || 0) - dt);
+    e.shieldCd = Math.max(0, (e.shieldCd || 0) - dt);
+
+    if (ghosted) {
+      // Cloaked: cancel any committed attack and wander confused.
+      e.pendingDash = false;
+      e.windup = 0;
+      e.dashT = 0;
+      e.diveT = 0;
+    }
+
+    if (wasDiving && e.diveT <= 0) {
+      e.orbitA = Math.atan2(e.y - p.y, e.x - p.x);
+    }
+    if (e.windup <= 0 && e.pendingDash) beginSwiftDash(e, p);
+
+    const zoom = Math.max(0.34, game.camera.zoom);
+    let speed = (330 * e.speedFactor * (fleeing ? 0.87 : 1)) / zoom;
+    if (ghosted) speed *= 0.7;
+    let damping = e.turnDamp || 2.8;
+    let target = null;
+
+    if (fleeing) {
+      // Any hunter runs when the player can eat it; smart ones bolt earlier.
+      e.pendingDash = false;
+      e.windup = 0;
+      e.dashT = 0;
+      e.diveT = 0;
+      const a = Math.atan2(e.y - p.y, e.x - p.x) + Math.sin(game.timeNow * 2 + e.index) * 0.3;
+      target = {
+        x: clamp(e.x + Math.cos(a) * 760, 120, game.world.width - 120),
+        y: clamp(e.y + Math.sin(a) * 760, 120, game.world.height - 120)
+      };
+      speed *= 0.92;
+      damping = Math.max(damping, 3.2);
+    } else if (!grace && !ghosted) {
+      if (e.type === 'tank') {
+        target = { x: p.x + p.vx * 0.1, y: p.y + p.vy * 0.1 };
+      } else if (e.type === 'swift') {
+        if (dToPlayer < def.chaseRadius) {
+          if (e.dashT > 0) {
+            target = { x: e.dashX, y: e.dashY };
+            speed *= def.dashSpeed;
+            damping = 9;
+          } else if (e.windup > 0 || e.pendingDash) {
+            target = { x: p.x + p.vx * 0.3, y: p.y + p.vy * 0.3 };
+            speed *= 0.2;
+            damping = 3.4;
+          } else {
+            target = { x: p.x + p.vx * 0.18, y: p.y + p.vy * 0.18 };
+            if (e.dashCd <= 0 && dToPlayer > 180 && dToPlayer < 720) {
+              e.pendingDash = true;
+              e.windup = 0.3;
+            }
+          }
+        } else {
+          target = { x: p.x, y: p.y };
+        }
+      } else if (e.type === 'smart') {
+        if (dToPlayer < def.chaseRadius) {
+          const lead = clamp(dToPlayer / 620, 0.25, 0.95);
+          target = { x: p.x + p.vx * lead, y: p.y + p.vy * lead };
+          damping = 4.2;
+        } else {
+          target = { x: p.x, y: p.y };
+        }
+      } else if (e.type === 'swarm') {
+        if (dToPlayer < def.chaseRadius) {
+          if (e.diveT > 0) {
+            target = { x: e.diveX, y: e.diveY };
+            speed *= def.dashSpeed;
+            damping = 7.5;
+          } else {
+            e.orbitA += dt * 0.9 * e.orbitDir;
+            target = {
+              x: p.x + Math.cos(e.orbitA) * e.orbitR,
+              y: p.y + Math.sin(e.orbitA) * e.orbitR
+            };
+            damping = 4.6;
+            if (e.diveCd <= 0 && dToPlayer < e.orbitR + 190) {
+              e.diveX = p.x + p.vx * 0.3;
+              e.diveY = p.y + p.vy * 0.3;
+              e.diveT = def.dashTime;
+              e.diveCd = def.dashCooldown + Math.random() * 0.9;
+              spawnShockwave(e.x, e.y, e.radius * 0.4, e.radius * 2, hexToRgba(e.tint, 0.45), 0.35);
+            }
+          }
+        } else {
+          // Close the distance, then start orbiting.
+          target = { x: p.x, y: p.y };
+          speed *= 1.06;
+        }
+      }
+    }
+
+    if (!target) {
+      e.retarget -= dt;
+      if (!e.waypoint || e.retarget <= 0 || dist(e.x, e.y, e.waypoint.x, e.waypoint.y) < 34) {
+        let wx;
+        let wy;
         for (let attempt = 0; attempt < 12; attempt++) {
           wx = 160 + Math.random() * (game.world.width - 320);
           wy = 160 + Math.random() * (game.world.height - 320);
           if (dist(wx, wy, e.x, e.y) > 300) break;
         }
+        e.waypoint = { x: wx, y: wy };
         e.retarget = 2.3 + Math.random() * 3.8;
       }
-      e.waypoint = { x: wx, y: wy };
+      target = e.waypoint;
+    } else {
+      e.waypoint = null;
+      e.retarget = 0;
     }
 
-    const dx = e.waypoint.x - e.x;
-    const dy = e.waypoint.y - e.y;
+    const dx = target.x - e.x;
+    const dy = target.y - e.y;
     const len = Math.max(0.001, Math.hypot(dx, dy));
     const targetVx = dx / len * speed;
     const targetVy = dy / len * speed;
-    e.vx = damp(e.vx, targetVx, 2.8, dt);
-    e.vy = damp(e.vy, targetVy, 2.8, dt);
+    e.vx = damp(e.vx, targetVx, damping, dt);
+    e.vy = damp(e.vy, targetVy, damping, dt);
     e.x = clamp(e.x + e.vx * dt, 80, game.world.width - 80);
     e.y = clamp(e.y + e.vy * dt, 80, game.world.height - 80);
-    e.angle += dt * 0.6;
+    const flow = windAt(e.x, e.y);
+    if (flow) {
+      e.x = clamp(e.x + flow.dx * flow.strength * 0.42 * dt, 80, game.world.width - 80);
+      e.y = clamp(e.y + flow.dy * flow.strength * 0.42 * dt, 80, game.world.height - 80);
+    }
+    const moveSpeed = Math.hypot(e.vx, e.vy);
+    if (moveSpeed > 24) e.moveAngle = Math.atan2(e.vy, e.vx);
+    e.angle += dt * (e.type === 'swift' ? 1.5 : e.type === 'tank' ? 0.4 : 0.72);
     e.pulse = Math.max(0, e.pulse - dt * 2.4);
     e.radius = damp(e.radius, e.targetRadius, 4.8, dt);
 
     // Little dust motes spiralling into the hunter.
-    if (Math.random() < dt * 7) {
+    const moteRate = e.type === 'swarm' ? 4 : 7;
+    if (Math.random() < dt * moteRate) {
       const a = Math.random() * TAU;
       const rr = e.radius * (1.05 + Math.random() * 0.75);
       game.particles.push({
@@ -1970,9 +2843,42 @@
     }
   }
 
+  function blockWithShield(e) {
+    const p = game.player;
+    if (!p || !e) return;
+    let dx = e.x - p.x;
+    let dy = e.y - p.y;
+    if (Math.hypot(dx, dy) < 0.5) {
+      dx = 0;
+      dy = -1;
+    }
+    const d = Math.max(1, Math.hypot(dx, dy));
+    e.x = clamp(e.x + (dx / d) * 74, 80, game.world.width - 80);
+    e.y = clamp(e.y + (dy / d) * 74, 80, game.world.height - 80);
+    e.vx = (dx / d) * 620;
+    e.vy = (dy / d) * 620;
+    e.pendingDash = false;
+    e.windup = 0;
+    e.dashT = 0;
+    e.diveT = 0;
+    e.pulse = Math.max(e.pulse || 0, 0.7);
+    const now = performance.now();
+    if (now - game.lastShieldBlock > 320) {
+      game.lastShieldBlock = now;
+      addFloater(p.x, p.y - p.radius - 28, '护盾抵挡', '#7fe9ff', 15);
+      spawnShockwave(p.x, p.y, p.radius * 0.8, p.radius * 3.4, 'rgba(127, 233, 255, 0.8)', 0.7);
+      spawnBurst(p.x, p.y, 30, '#7fe9ff', 220, 2.6);
+      addShake(0.34);
+      sound.tone(520, 0.18, 'triangle', 0.08, 220);
+      sound.tone(880, 0.28, 'sine', 0.05, 420);
+    }
+  }
+
   function checkEnemyCollision() {
     const p = game.player;
     if (!p || game.mode !== 'playing') return;
+    // Updraft pads lift the hole above the hunters for a moment.
+    if (p.liftT > 0) return;
     for (let i = 0; i < game.enemies.length; i++) {
       const e = game.enemies[i];
       if (!e || e.beingEaten) continue;
@@ -1986,6 +2892,10 @@
       }
 
       if (d + p.radius * 0.86 < e.radius) {
+        if (p.shieldT > 0) {
+          blockWithShield(e);
+          continue;
+        }
         startPlayerDeath(e);
         return;
       }
@@ -2135,8 +3045,15 @@
     if (game.mode === 'playing') {
       game.runTime += dt;
       game.stateTime += dt;
+      updateMechanics(dt);
       updatePlayer(dt);
+      updatePickups(dt);
       updateEnemies(dt);
+      if (!game.graceAnnounced && game.runTime >= HUNTER_GRACE) {
+        game.graceAnnounced = true;
+        showToast('猎手开始狩猎！', 'danger', 2200);
+        sound.danger();
+      }
       checkObjectCollisions();
       if (game.mode === 'playing') checkEnemyCollision();
       updateTowerHint();
@@ -2483,6 +3400,8 @@
     ctx.stroke();
     ctx.setLineDash([]);
 
+    drawMechanicsBase(themeKey);
+
     ctx.restore();
 
     // Rim.
@@ -2694,6 +3613,332 @@
   }
 
 
+  // ------------------------------------------------------------
+  // Interactive map mechanics — static bases (baked into ground cache)
+  // ------------------------------------------------------------
+  function drawMechanicsBase(themeKey) {
+    const mech = game.world && game.world.mech;
+    if (!mech) return;
+    for (let i = 0; i < mech.oil.length; i++) drawOilSlick(mech.oil[i]);
+    for (let i = 0; i < mech.movers.length; i++) drawMoverRoute(mech.movers[i]);
+    for (let i = 0; i < mech.hooks.length; i++) drawGantryBase(mech.hooks[i]);
+    for (let i = 0; i < mech.gusts.length; i++) drawGustBase(mech.gusts[i], themeKey);
+    for (let i = 0; i < mech.pads.length; i++) drawPadBase(mech.pads[i]);
+  }
+
+  function drawOilSlick(o) {
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    ctx.rotate(o.rot);
+    const stain = ctx.createRadialGradient(0, 0, 4, 0, 0, o.rx);
+    stain.addColorStop(0, 'rgba(4, 6, 9, 0.94)');
+    stain.addColorStop(0.58, 'rgba(7, 9, 13, 0.86)');
+    stain.addColorStop(0.88, 'rgba(16, 19, 26, 0.42)');
+    stain.addColorStop(1, 'rgba(16, 19, 26, 0)');
+    ctx.fillStyle = stain;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, o.rx, o.ry, 0, 0, TAU);
+    ctx.fill();
+
+    // Thin iridescent film.
+    ctx.globalCompositeOperation = 'lighter';
+    const sheen = ctx.createLinearGradient(-o.rx, 0, o.rx, 0);
+    sheen.addColorStop(0, 'rgba(90, 255, 220, 0)');
+    sheen.addColorStop(0.34, 'rgba(78, 214, 255, 0.07)');
+    sheen.addColorStop(0.62, 'rgba(190, 120, 255, 0.06)');
+    sheen.addColorStop(0.85, 'rgba(255, 150, 220, 0.035)');
+    sheen.addColorStop(1, 'rgba(255, 150, 220, 0)');
+    ctx.fillStyle = sheen;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, o.rx * 0.94, o.ry * 0.82, 0, 0, TAU);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    ctx.strokeStyle = 'rgba(255, 178, 84, 0.22)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([9, 15]);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, o.rx * 0.98, o.ry * 0.92, 0, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function drawMoverRoute(m) {
+    const x0 = m.slideX ? m.ox - m.travel : m.ox;
+    const y0 = m.slideY ? m.oy - m.travel : m.oy;
+    const x1 = m.slideX ? m.ox + m.travel : m.ox;
+    const y1 = m.slideY ? m.oy + m.travel : m.oy;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 178, 84, 0.13)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([12, 16]);
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // End gates.
+    ctx.fillStyle = 'rgba(255, 178, 84, 0.16)';
+    const ex = m.slideX ? 0 : 9;
+    const ey = m.slideX ? 9 : 0;
+    ctx.fillRect(x0 - ex, y0 - ey, ex * 2 + 2, ey * 2 + 2);
+    ctx.fillRect(x1 - ex, y1 - ey, ex * 2 + 2, ey * 2 + 2);
+    ctx.restore();
+  }
+
+  function drawGantryBase(h) {
+    const top = h.y - h.height;
+    const half = h.span / 2;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.beginPath();
+    ctx.ellipse(h.x, h.y + 4, half * 0.98, 18, 0, 0, TAU);
+    ctx.fill();
+
+    // Legs.
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(188, 198, 212, 0.42)';
+    ctx.lineWidth = 11;
+    ctx.beginPath();
+    ctx.moveTo(h.x - half, h.y);
+    ctx.lineTo(h.x - half, top);
+    ctx.moveTo(h.x + half, h.y);
+    ctx.lineTo(h.x + half, top);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(120, 130, 146, 0.4)';
+    ctx.lineWidth = 3;
+    for (let s = -1; s <= 1; s += 2) {
+      const lx = h.x + s * half;
+      for (let k = 1; k < 4; k++) {
+        const yy = h.y - (h.height * k) / 4;
+        ctx.beginPath();
+        ctx.moveTo(lx - 12, yy);
+        ctx.lineTo(lx + 12, yy);
+        ctx.stroke();
+      }
+    }
+
+    // Top beam with hazard stripes.
+    ctx.strokeStyle = 'rgba(255, 178, 84, 0.52)';
+    ctx.lineWidth = 13;
+    ctx.beginPath();
+    ctx.moveTo(h.x - half, top);
+    ctx.lineTo(h.x + half, top);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(20, 18, 14, 0.55)';
+    ctx.lineWidth = 13;
+    ctx.setLineDash([9, 11]);
+    ctx.beginPath();
+    ctx.moveTo(h.x - half, top);
+    ctx.lineTo(h.x + half, top);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function drawGustBase(g, themeKey) {
+    const horizontal = g.dx !== 0;
+    const dir = horizontal ? g.dx : g.dy;
+    ctx.save();
+    ctx.translate(g.x, g.y);
+    const grad = horizontal
+      ? ctx.createLinearGradient(-g.w / 2, 0, g.w / 2, 0)
+      : ctx.createLinearGradient(0, -g.h / 2, 0, g.h / 2);
+    grad.addColorStop(0, 'rgba(124, 239, 255, 0)');
+    grad.addColorStop(0.5, 'rgba(124, 239, 255, 0.055)');
+    grad.addColorStop(1, 'rgba(124, 239, 255, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(-g.w / 2, -g.h / 2, g.w, g.h);
+
+    ctx.strokeStyle = 'rgba(124, 239, 255, 0.13)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([8, 14]);
+    ctx.strokeRect(-g.w / 2, -g.h / 2, g.w, g.h);
+    ctx.setLineDash([]);
+
+    // Direction chevrons.
+    const len = horizontal ? g.w : g.h;
+    const count = Math.max(2, Math.floor(len / 74));
+    ctx.strokeStyle = 'rgba(150, 245, 255, 0.24)';
+    ctx.lineWidth = 2.4;
+    for (let i = 0; i < count; i++) {
+      const pos = -len / 2 + 34 + (i * (len - 68)) / Math.max(1, count - 1);
+      ctx.save();
+      if (horizontal) ctx.translate(pos, 0);
+      else {
+        ctx.translate(0, pos);
+        ctx.rotate(Math.PI / 2);
+      }
+      ctx.beginPath();
+      ctx.moveTo(-8 * dir, -13);
+      ctx.lineTo(7 * dir, 0);
+      ctx.lineTo(-8 * dir, 13);
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function drawPadBase(pad) {
+    ctx.save();
+    ctx.translate(pad.x, pad.y);
+    const glow = ctx.createRadialGradient(0, 0, 4, 0, 0, pad.r * 1.55);
+    glow.addColorStop(0, 'rgba(120, 240, 255, 0.16)');
+    glow.addColorStop(0.62, 'rgba(120, 240, 255, 0.045)');
+    glow.addColorStop(1, 'rgba(120, 240, 255, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, pad.r * 1.55, 0, TAU);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(150, 245, 255, 0.5)';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.arc(0, 0, pad.r, 0, TAU);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(150, 245, 255, 0.22)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([6, 10]);
+    ctx.beginPath();
+    ctx.arc(0, 0, pad.r * 0.72, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = 'rgba(190, 252, 255, 0.72)';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 3; i++) {
+      const oy = 14 + i * 11;
+      ctx.beginPath();
+      ctx.moveTo(-13, oy);
+      ctx.lineTo(0, oy - 12);
+      ctx.lineTo(13, oy);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // Animated overlays drawn between the ground and the entities.
+  function drawMechanicsDynamic(time) {
+    const mech = game.world && game.world.mech;
+    if (!mech) return;
+
+    // Oil shimmer.
+    for (let i = 0; i < mech.oil.length; i++) {
+      const o = mech.oil[i];
+      ctx.save();
+      ctx.translate(o.x, o.y);
+      ctx.rotate(o.rot);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.13 + Math.sin(time * 1.1 + o.phase) * 0.05;
+      ctx.strokeStyle = 'rgba(150, 240, 255, 0.5)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.ellipse(Math.sin(time * 0.5 + o.phase) * o.rx * 0.2, 0, o.rx * 0.55, o.ry * 0.32, 0, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+
+    // Wind streaks.
+    for (let i = 0; i < mech.gusts.length; i++) {
+      const g = mech.gusts[i];
+      const horizontal = g.dx !== 0;
+      const len = horizontal ? g.w : g.h;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(g.x - g.w / 2, g.y - g.h / 2, g.w, g.h);
+      ctx.clip();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = 'rgba(160, 246, 255, 0.34)';
+      ctx.lineWidth = 1.6;
+      for (let k = 0; k < 9; k++) {
+        const t = (time * (120 + k * 9) + k * 97) % (len + 80);
+        const travel = -len / 2 - 40 + t;
+        const pos = (g.dx + g.dy) < 0 ? -travel : travel;
+        const jitter = ((k * 37) % 7 - 3) * 5;
+        ctx.beginPath();
+        if (horizontal) {
+          ctx.moveTo(g.x + pos, g.y + jitter);
+          ctx.lineTo(g.x + pos + 26 * g.dx, g.y + jitter);
+        } else {
+          ctx.moveTo(g.x + jitter, g.y + pos);
+          ctx.lineTo(g.x + jitter, g.y + pos + 26 * g.dy);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Pad pulse when ready.
+    for (let i = 0; i < mech.pads.length; i++) {
+      const pad = mech.pads[i];
+      const ready = pad.cool <= 0;
+      const pulse = (time * 0.9 + pad.phase) % 1;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = ready ? (1 - pulse) * 0.4 : 0.08;
+      ctx.strokeStyle = ready ? 'rgba(150, 245, 255, 0.8)' : 'rgba(120, 150, 170, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(pad.x, pad.y, pad.r * (0.65 + pulse * 0.65), 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Crane cable + swinging hook.
+    for (let i = 0; i < mech.hooks.length; i++) {
+      const h = mech.hooks[i];
+      const swing = Math.sin(time * h.speed + h.phase);
+      const hx = h.x + swing * h.amp;
+      const hy = h.y - 12;
+      ctx.save();
+      // Ground warning ellipse.
+      ctx.strokeStyle = 'rgba(255, 178, 84, 0.28)';
+      ctx.lineWidth = 1.6;
+      ctx.setLineDash([6, 8]);
+      ctx.beginPath();
+      ctx.ellipse(hx, h.y + 8, 30, 12, 0, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Cable.
+      ctx.strokeStyle = 'rgba(222, 228, 238, 0.42)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(h.x, h.y - h.height);
+      ctx.lineTo(hx, hy - 26);
+      ctx.stroke();
+
+      // Hook body.
+      ctx.translate(hx, hy);
+      ctx.globalCompositeOperation = 'lighter';
+      const hg = ctx.createRadialGradient(0, 0, 2, 0, 0, 34);
+      hg.addColorStop(0, 'rgba(255, 196, 96, 0.28)');
+      hg.addColorStop(1, 'rgba(255, 196, 96, 0)');
+      ctx.fillStyle = hg;
+      ctx.beginPath();
+      ctx.arc(0, 0, 34, 0, TAU);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = '#ffc76e';
+      ctx.lineWidth = 4.2;
+      ctx.beginPath();
+      ctx.moveTo(0, -26);
+      ctx.lineTo(0, -6);
+      ctx.arc(-6, 4, 11, -0.4, Math.PI * 1.15, false);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // Lift pads visually raise the hole for a moment.
+  function playerLiftOffset(p) {
+    if (!p || p.liftT <= 0) return 0;
+    const t = clamp(p.liftT / 1.2, 0, 1);
+    return Math.sin((1 - t) * Math.PI) * 26;
+  }
+
   const groundCache = { canvas: null, scale: 1, margin: 110, width: 0, height: 0, world: null };
 
   function buildGroundCache() {
@@ -2842,19 +4087,100 @@
     }
 
     if (enemyHole) {
-      // Jagged hunter corona.
+      const typeKey = opts.type || 'basic';
+      const moveX = opts.moveX || 0;
+      const moveY = opts.moveY || 0;
+      const moving = Math.hypot(moveX, moveY) > 30;
+      const aim = moving ? Math.atan2(moveY, moveX) : rot * 0.4;
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = hexToRgba(primary, 0.3);
-      ctx.lineWidth = 1.4;
-      for (let i = 0; i < 12; i++) {
-        const a = rot * 0.4 + (i / 12) * TAU;
-        const r1 = rr * (1.12 + (i % 3) * 0.04);
-        const r2 = rr * (1.28 + (i % 2) * 0.1);
+
+      if (typeKey === 'tank') {
+        // Heavy double hull with rivets.
+        ctx.strokeStyle = hexToRgba(primary, 0.44);
+        ctx.lineWidth = Math.max(1.6, rr * 0.052);
         ctx.beginPath();
-        ctx.moveTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1);
-        ctx.lineTo(x + Math.cos(a + 0.025) * r2, y + Math.sin(a + 0.025) * r2);
+        ctx.arc(x, y, rr * 1.13, 0, TAU);
         ctx.stroke();
+        ctx.strokeStyle = hexToRgba(secondary, 0.2);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(x, y, rr * 1.25, 0, TAU);
+        ctx.stroke();
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * TAU + rot * 0.12;
+          ctx.fillStyle = hexToRgba(secondary, 0.46);
+          ctx.beginPath();
+          ctx.arc(x + Math.cos(a) * rr * 1.13, y + Math.sin(a) * rr * 1.13, Math.max(1.2, rr * 0.028), 0, TAU);
+          ctx.fill();
+        }
+      } else if (typeKey === 'swift') {
+        // Speed streaks trailing behind the direction of travel.
+        const dashing = !!opts.dashing;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 6; i++) {
+          const a = aim + Math.PI + (i - 2.5) * 0.15;
+          const len = rr * (dashing ? 1.6 : 0.8) * (0.62 + (i % 3) * 0.2);
+          const r0 = rr * 0.95;
+          ctx.strokeStyle = hexToRgba(i % 2 ? secondary : primary, dashing ? 0.5 : 0.2);
+          ctx.lineWidth = Math.max(1, rr * (dashing ? 0.055 : 0.032));
+          ctx.beginPath();
+          ctx.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0);
+          ctx.lineTo(x + Math.cos(a) * (r0 + len), y + Math.sin(a) * (r0 + len));
+          ctx.stroke();
+        }
+        if (opts.windup > 0) {
+          // Charge-up telegraph before the sprint.
+          const charge = 1 - clamp(opts.windup / 0.3, 0, 1);
+          ctx.strokeStyle = hexToRgba(secondary, 0.5 + charge * 0.4);
+          ctx.lineWidth = 1.6;
+          ctx.setLineDash([3, 5]);
+          ctx.beginPath();
+          ctx.arc(x, y, rr * (1.34 + charge * 0.22), aim, aim + TAU);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      } else if (typeKey === 'smart') {
+        // Scanning reticle.
+        for (let i = 0; i < 16; i++) {
+          const a = rot * 0.35 + (i / 16) * TAU;
+          const major = i % 4 === 0;
+          ctx.strokeStyle = hexToRgba(major ? secondary : primary, major ? 0.42 : 0.18);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x + Math.cos(a) * rr * (major ? 1.14 : 1.2), y + Math.sin(a) * rr * (major ? 1.28 : 1.24));
+          ctx.lineTo(x + Math.cos(a) * rr * (major ? 1.34 : 1.28), y + Math.sin(a) * rr * (major ? 1.38 : 1.3));
+          ctx.stroke();
+        }
+        ctx.strokeStyle = hexToRgba(secondary, 0.4);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(x, y, rr * 1.29, rot * 1.7, rot * 1.7 + 0.85);
+        ctx.stroke();
+      } else if (typeKey === 'swarm') {
+        // Dashed pack-orbit ring.
+        ctx.setLineDash([3, 7]);
+        ctx.lineDashOffset = -rot * 10;
+        ctx.strokeStyle = hexToRgba(primary, 0.46);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(x, y, rr * 1.42 + Math.sin(time * 3 + rot) * rr * 0.06, 0, TAU);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.lineDashOffset = 0;
+      } else {
+        // Jagged hunter corona.
+        ctx.strokeStyle = hexToRgba(primary, 0.3);
+        ctx.lineWidth = 1.4;
+        for (let i = 0; i < 12; i++) {
+          const a = rot * 0.4 + (i / 12) * TAU;
+          const r1 = rr * (1.12 + (i % 3) * 0.04);
+          const r2 = rr * (1.28 + (i % 2) * 0.1);
+          ctx.beginPath();
+          ctx.moveTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1);
+          ctx.lineTo(x + Math.cos(a + 0.025) * r2, y + Math.sin(a + 0.025) * r2);
+          ctx.stroke();
+        }
       }
       ctx.restore();
     }
@@ -4112,10 +5438,247 @@
   // ============================================================
   // Sorted world rendering / effects
   // ============================================================
+  function drawPlayerAuras(p, time) {
+    if (!p) return;
+    const r = p.radius;
+    const energy = (p.shieldT || 0) + (p.magnetT || 0) + (p.boostT || 0) + (p.ghostT || 0);
+    if (energy <= 0) return;
+    ctx.save();
+
+    if (p.shieldT > 0) {
+      const lift = playerLiftOffset(p);
+      const y = p.y - lift;
+      const pulse = 0.86 + Math.sin(time * 5.2) * 0.06;
+      ctx.globalCompositeOperation = 'lighter';
+      const bubble = ctx.createRadialGradient(p.x, y, r * 0.9, p.x, y, r * 1.42);
+      bubble.addColorStop(0, 'rgba(127, 233, 255, 0)');
+      bubble.addColorStop(0.72, 'rgba(127, 233, 255, 0.07)');
+      bubble.addColorStop(1, 'rgba(127, 233, 255, 0.2)');
+      ctx.fillStyle = bubble;
+      ctx.beginPath();
+      ctx.arc(p.x, y, r * 1.42, 0, TAU);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(127, 233, 255, 0.56)';
+      ctx.lineWidth = Math.max(1.4, r * 0.038);
+      ctx.setLineDash([r * 0.34, r * 0.2]);
+      ctx.lineDashOffset = -time * 26;
+      ctx.beginPath();
+      ctx.arc(p.x, y, r * 1.26 * pulse, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(127, 233, 255, 0.22)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(p.x, y, r * 1.44, time * 0.4, time * 0.4 + TAU * 0.7);
+      ctx.stroke();
+    }
+
+    if (p.magnetT > 0) {
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 3; i++) {
+        const a = time * (1.1 + i * 0.24) + i * 2.1;
+        ctx.strokeStyle = hexToRgba('#ffd36e', 0.34 - i * 0.07);
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * (1.2 + i * 0.18), a, a + 1.8);
+        ctx.stroke();
+      }
+      const reach = 260 + r * 2.6;
+      ctx.strokeStyle = 'rgba(255, 211, 110, 0.09)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([6, 12]);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, reach * 0.82, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    if (p.boostT > 0) {
+      const sp = Math.hypot(p.vx, p.vy);
+      if (sp > 40) {
+        const a = Math.atan2(p.vy, p.vx);
+        const nx = Math.cos(a + Math.PI / 2);
+        const ny = Math.sin(a + Math.PI / 2);
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = -1; i <= 1; i++) {
+          const off = i * r * 0.62;
+          const tail = r * (1.5 + Math.abs(i) * 0.22);
+          ctx.strokeStyle = `rgba(255, 154, 92, ${0.34 - Math.abs(i) * 0.08})`;
+          ctx.lineWidth = Math.max(1.2, r * 0.035);
+          ctx.beginPath();
+          ctx.moveTo(p.x - Math.cos(a) * tail + nx * off, p.y - Math.sin(a) * tail + ny * off);
+          ctx.lineTo(p.x - Math.cos(a) * (tail + r * 1.1) + nx * off, p.y - Math.sin(a) * (tail + r * 1.1) + ny * off);
+          ctx.stroke();
+        }
+      }
+    }
+
+    if (p.ghostT > 0) {
+      ctx.globalCompositeOperation = 'lighter';
+      const shimmer = 0.4 + Math.sin(time * 6) * 0.14;
+      for (let i = 0; i < 2; i++) {
+        const rr = r * (1.2 + i * 0.24) + Math.sin(time * 3 + i) * r * 0.03;
+        ctx.strokeStyle = `rgba(200, 166, 255, ${shimmer * (0.75 - i * 0.2)})`;
+        ctx.lineWidth = 1.6;
+        ctx.setLineDash([r * 0.24, r * 0.22]);
+        ctx.lineDashOffset = time * 22 * (i % 2 ? -1 : 1);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rr, 0, TAU);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+
+    ctx.restore();
+  }
+
+  function drawPickup(pk, time) {
+    const def = PICKUP_TYPES[pk.type] || PICKUP_TYPES.shield;
+    const fadeIn = clamp(pk.spawnT || 0, 0, 1);
+    const fadeOut = clamp((pk.life - pk.age) / 2.4, 0, 1);
+    const alpha = Math.min(fadeIn, fadeOut);
+    if (alpha <= 0.01) return;
+    const col = def.color;
+    const bob = Math.sin(time * 2.2 + pk.phase) * 6;
+    const y = pk.y + bob;
+    const r = pk.r;
+
+    // Vertical beacon so the relic reads from across the street.
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    const beam = ctx.createLinearGradient(pk.x, y, pk.x, y - 168);
+    beam.addColorStop(0, hexToRgba(col, 0.4));
+    beam.addColorStop(0.44, hexToRgba(col, 0.13));
+    beam.addColorStop(1, hexToRgba(col, 0));
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(pk.x - r * 0.82, y);
+    ctx.lineTo(pk.x - r * 0.3, y - 168);
+    ctx.lineTo(pk.x + r * 0.3, y - 168);
+    ctx.lineTo(pk.x + r * 0.82, y);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.globalCompositeOperation = 'lighter';
+    const halo = ctx.createRadialGradient(pk.x, pk.y, 1, pk.x, pk.y, r * 2.6);
+    halo.addColorStop(0, hexToRgba(col, 0.32));
+    halo.addColorStop(0.5, hexToRgba(col, 0.1));
+    halo.addColorStop(1, hexToRgba(col, 0));
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.ellipse(pk.x, pk.y + 4, r * 2.6, r * 1.15, 0, 0, TAU);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    ctx.strokeStyle = hexToRgba(col, 0.55);
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 7]);
+    ctx.lineDashOffset = -time * 18;
+    ctx.beginPath();
+    ctx.ellipse(pk.x, pk.y + 4, r * 1.5, r * 0.64, 0, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Floating rune sphere.
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(pk.x, y);
+    const core = ctx.createRadialGradient(-r * 0.26, -r * 0.3, r * 0.08, 0, 0, r * 1.06);
+    core.addColorStop(0, '#f8feff');
+    core.addColorStop(0.26, col);
+    core.addColorStop(0.78, hexToRgba(col, 0.44));
+    core.addColorStop(1, hexToRgba(col, 0.04));
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = hexToRgba(col, 0.92);
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.stroke();
+
+    const spin = time * 0.9 + pk.phase;
+    ctx.strokeStyle = 'rgba(8, 16, 28, 0.92)';
+    ctx.fillStyle = 'rgba(8, 16, 28, 0.92)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    if (pk.type === 'shield') {
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = spin * 0.35 + (i / 6) * TAU;
+        const px = Math.cos(a) * r * 0.5;
+        const py = Math.sin(a) * r * 0.5;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.2, 0, TAU);
+      ctx.fill();
+    } else if (pk.type === 'magnet') {
+      ctx.beginPath();
+      ctx.arc(0, r * 0.06, r * 0.46, Math.PI * 1.12, Math.PI * 1.88);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-r * 0.46, -r * 0.1);
+      ctx.lineTo(-r * 0.46, -r * 0.46);
+      ctx.moveTo(r * 0.46, -r * 0.1);
+      ctx.lineTo(r * 0.46, -r * 0.46);
+      ctx.stroke();
+    } else if (pk.type === 'boost') {
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.36, i * r * 0.28 - r * 0.12);
+        ctx.lineTo(0, i * r * 0.28 + r * 0.14);
+        ctx.lineTo(r * 0.36, i * r * 0.28 - r * 0.12);
+        ctx.stroke();
+      }
+    } else {
+      ctx.setLineDash([3, 4]);
+      ctx.lineDashOffset = -spin * 8;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.5, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.17, 0, TAU);
+      ctx.fill();
+    }
+
+    for (let i = 0; i < 3; i++) {
+      const a = spin + (i / 3) * TAU;
+      ctx.fillStyle = hexToRgba(col, 0.8);
+      ctx.beginPath();
+      ctx.arc(Math.cos(a) * r * 1.34, Math.sin(a) * r * 0.55, 1.3, 0, TAU);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   function drawEntry(entry, time) {
     if (entry.kind === 'player') {
       const p = game.player;
-      drawBlackHole(p.x, p.y, p.radius, {
+      const hop = playerLiftOffset(p);
+      if (hop > 0.5) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = 'rgba(140, 244, 255, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 8, p.radius * 1.12, p.radius * 0.42, 0, 0, TAU);
+        ctx.stroke();
+        ctx.globalAlpha = 0.28;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 8, p.radius * 1.55, p.radius * 0.58, 0, 0, TAU);
+        ctx.stroke();
+        ctx.restore();
+      }
+      drawPlayerAuras(p, time);
+      drawBlackHole(p.x, p.y - hop, p.radius, {
         isPlayer: true,
         angle: p.angle,
         pulse: p.pulse,
@@ -4129,8 +5692,17 @@
         angle: e.angle,
         pulse: e.pulse,
         tint: e.tint,
-        tint2: e.tint2
+        tint2: e.tint2,
+        type: e.type,
+        dashing: (e.dashT || 0) > 0 || (e.diveT || 0) > 0,
+        windup: e.windup || 0,
+        moveX: e.vx,
+        moveY: e.vy
       }, time);
+    } else if (entry.kind === 'mover') {
+      drawMover(entry.ref, time);
+    } else if (entry.kind === 'pickup') {
+      drawPickup(entry.ref, time);
     } else if (entry.kind === 'goal') {
       drawGoalTower(entry.ref, time);
     } else if (entry.kind === 'building') {
@@ -4138,6 +5710,33 @@
     } else {
       drawProp(entry.ref, time);
     }
+  }
+
+  function drawMover(m, time) {
+    // Amber halo signals a hazard until the hole is large enough to eat it.
+    const canEat = game.player && game.player.radius > m.r * 1.45;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const halo = ctx.createRadialGradient(m.x, m.y, 4, m.x, m.y, m.r * 2.3);
+    halo.addColorStop(0, canEat ? 'rgba(120, 245, 255, 0.16)' : 'rgba(255, 170, 70, 0.16)');
+    halo.addColorStop(1, 'rgba(255, 170, 70, 0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, m.r * 2.3, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = canEat ? 'rgba(140, 245, 255, 0.4)' : 'rgba(255, 178, 84, 0.34)';
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([6, 9]);
+    ctx.beginPath();
+    ctx.ellipse(m.x, m.y + 7, m.r * 1.32, m.r * 0.52, 0, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    drawProp(m, time);
   }
 
   function drawSuckEffect(fx, time) {
@@ -4272,6 +5871,7 @@
     ctx.translate(-cam.x, -cam.y);
 
     drawGroundCached();
+    drawMechanicsDynamic(time);
 
     const entries = [];
     for (let i = 0; i < game.objects.length; i++) {
@@ -4283,6 +5883,19 @@
         y: o.y,
         ref: o
       });
+    }
+    if (game.world.mech) {
+      const movers = game.world.mech.movers;
+      for (let i = 0; i < movers.length; i++) {
+        const m = movers[i];
+        if (m.eaten || !inView(m.x, m.y, m.r, m.h)) continue;
+        entries.push({ kind: 'mover', y: m.y, ref: m });
+      }
+    }
+    for (let i = 0; i < game.pickups.length; i++) {
+      const pk = game.pickups[i];
+      if (!inView(pk.x, pk.y, 42, 150)) continue;
+      entries.push({ kind: 'pickup', y: pk.y, ref: pk });
     }
     const p = game.player;
     if (p && inView(p.x, p.y, p.radius, p.radius)) {
@@ -4305,7 +5918,7 @@
     if (p && playerIndex >= 0 && playerIsOccluded(entries, playerIndex, p)) {
       ctx.save();
       ctx.globalAlpha = 0.42;
-      drawBlackHole(p.x, p.y, p.radius, {
+      drawBlackHole(p.x, p.y - playerLiftOffset(p), p.radius, {
         isPlayer: true,
         angle: p.angle,
         pulse: p.pulse * 0.6,
@@ -4390,7 +6003,11 @@
       const sp = worldToScreen(e.x, e.y);
       const off = e.radius * cam.zoom + 20;
       if (sp.x > margin && sp.x < W - margin && sp.y > margin && sp.y < H - margin) {
-        const text = manyHunters ? `猎手 ${e.index + 1} · LV.${e.level}` : `猎手 LV.${e.level}`;
+        const short = hunterDef(e).short;
+        let text;
+        if (e.groupSize > 1) text = `${short} ${e.index + 1}-${e.memberIndex + 1} · LV.${e.level}`;
+        else if (manyHunters) text = `${short} ${e.index + 1} · LV.${e.level}`;
+        else text = `${short}猎手 LV.${e.level}`;
         drawScreenPill(text, sp.x, sp.y - off, e.tint || '#ff5f7e', {
           bg: 'rgba(20, 7, 13, 0.78)',
           border: hexToRgba(e.tint || '#ff5f7e', 0.34),
@@ -4518,7 +6135,9 @@
         }
       }
       if (nearest && nearestDist < 1800) {
-        const tag = game.enemies.length > 1 ? `猎手 ${nearest.index + 1} ${fmtDist(nearestDist)}` : `猎手 ${fmtDist(nearestDist)}`;
+        const tag = game.enemies.length > 1
+          ? `${hunterDef(nearest).short} ${nearest.index + 1} ${fmtDist(nearestDist)}`
+          : `${hunterDef(nearest).short}猎手 ${fmtDist(nearestDist)}`;
         drawEdgeArrow(nearest.x, nearest.y, nearest.tint || '#ff5477', tag, 1.3, plates);
       }
     }
@@ -4597,6 +6216,58 @@
   // ============================================================
   // Minimap
   // ============================================================
+  function drawMinimapMechanics(c, world, mx, my, scale) {
+    const mech = world.mech;
+    c.save();
+    // Oil slicks.
+    for (let i = 0; i < mech.oil.length; i++) {
+      const o = mech.oil[i];
+      c.fillStyle = 'rgba(255, 178, 84, 0.16)';
+      c.beginPath();
+      c.ellipse(mx(o.x), my(o.y), Math.max(2, o.rx * scale), Math.max(1.4, o.ry * scale), o.rot, 0, TAU);
+      c.fill();
+    }
+    // Wind corridors.
+    for (let i = 0; i < mech.gusts.length; i++) {
+      const g = mech.gusts[i];
+      const x = mx(g.x - g.w / 2);
+      const y = my(g.y - g.h / 2);
+      c.fillStyle = 'rgba(124, 239, 255, 0.1)';
+      c.fillRect(x, y, g.w * scale, g.h * scale);
+      c.strokeStyle = 'rgba(124, 239, 255, 0.35)';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(mx(g.x - g.dx * g.w * 0.3), my(g.y - g.dy * g.h * 0.3));
+      c.lineTo(mx(g.x + g.dx * g.w * 0.3), my(g.y + g.dy * g.h * 0.3));
+      c.stroke();
+    }
+    // Updraft pads.
+    for (let i = 0; i < mech.pads.length; i++) {
+      const pad = mech.pads[i];
+      c.strokeStyle = pad.cool > 0 ? 'rgba(124, 200, 220, 0.3)' : 'rgba(150, 245, 255, 0.7)';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.arc(mx(pad.x), my(pad.y), Math.max(1.8, pad.r * scale), 0, TAU);
+      c.stroke();
+    }
+    // Cargo containers.
+    for (let i = 0; i < mech.movers.length; i++) {
+      const m = mech.movers[i];
+      if (m.eaten) continue;
+      c.fillStyle = 'rgba(255, 178, 84, 0.8)';
+      c.fillRect(mx(m.x) - 2, my(m.y) - 2, 4, 4);
+    }
+    // Crane anchors.
+    c.fillStyle = 'rgba(255, 196, 110, 0.75)';
+    for (let i = 0; i < mech.hooks.length; i++) {
+      const h = mech.hooks[i];
+      c.beginPath();
+      c.arc(mx(h.x), my(h.y), 1.8, 0, TAU);
+      c.fill();
+    }
+    c.restore();
+  }
+
   function drawMinimap() {
     if (!game.world || !game.player) return;
     const c = miniCtx;
@@ -4649,6 +6320,9 @@
       c.stroke();
     }
 
+    // Interactive mechanics markers.
+    if (world.mech) drawMinimapMechanics(c, world, mx, my, scale);
+
     // Viewport.
     const cam = game.camera;
     const vw = W / cam.zoom * scale;
@@ -4677,25 +6351,88 @@
       c.shadowBlur = 0;
     }
 
-    // Enemies.
+    // Relics: hollow diamonds tinted by buff type.
+    for (let i = 0; i < game.pickups.length; i++) {
+      const pk = game.pickups[i];
+      const def = PICKUP_TYPES[pk.type] || PICKUP_TYPES.shield;
+      const cx = mx(pk.x);
+      const cy = my(pk.y);
+      const pulse = 1 + Math.sin(game.timeNow * 3.2 + pk.phase) * 0.22;
+      c.save();
+      c.translate(cx, cy);
+      c.rotate(Math.PI / 4);
+      c.strokeStyle = def.color;
+      c.shadowColor = def.color;
+      c.shadowBlur = 7;
+      c.lineWidth = 1.3;
+      c.strokeRect(-2.7 * pulse, -2.7 * pulse, 5.4 * pulse, 5.4 * pulse);
+      c.restore();
+    }
+    c.shadowBlur = 0;
+
+    // Enemies: silhouette shape encodes hunter type.
     for (let i = 0; i < game.enemies.length; i++) {
       const e = game.enemies[i];
       if (!e || e.beingEaten) continue;
       const ex = mx(e.x);
       const ey = my(e.y);
+      const type = e.type || 'basic';
       const tint = e.tint || '#ff4f70';
+      const wobble = Math.sin(game.timeNow * 3 + i) * 1.1;
+      c.save();
       c.fillStyle = tint;
       c.shadowColor = tint;
       c.shadowBlur = 10;
-      c.beginPath();
-      c.arc(ex, ey, 3.6, 0, TAU);
-      c.fill();
-      c.strokeStyle = hexToRgba(tint, 0.24 + Math.sin(game.timeNow * 3) * 0.08);
+      if (type === 'swift') {
+        c.save();
+        c.translate(ex, ey);
+        c.rotate(e.moveAngle || 0);
+        c.beginPath();
+        c.moveTo(5.4, 0);
+        c.lineTo(-3.4, -3.8);
+        c.lineTo(-3.4, 3.8);
+        c.closePath();
+        c.fill();
+        c.restore();
+      } else if (type === 'tank') {
+        c.fillRect(ex - 3.6, ey - 3.6, 7.2, 7.2);
+      } else if (type === 'smart') {
+        c.beginPath();
+        c.moveTo(ex, ey - 4.6);
+        c.lineTo(ex + 4.6, ey);
+        c.lineTo(ex, ey + 4.6);
+        c.lineTo(ex - 4.6, ey);
+        c.closePath();
+        c.fill();
+      } else if (type === 'swarm') {
+        c.beginPath();
+        c.arc(ex, ey, 2.5, 0, TAU);
+        c.fill();
+      } else {
+        c.beginPath();
+        c.arc(ex, ey, 3.6, 0, TAU);
+        c.fill();
+      }
+      c.strokeStyle = hexToRgba(tint, 0.24 + wobble * 0.06);
       c.lineWidth = 1;
       c.beginPath();
-      c.arc(ex, ey, 7.5 + Math.sin(game.timeNow * 3 + i) * 1.5, 0, TAU);
+      if (type === 'tank') {
+        const s = 7.5 + wobble * 0.5;
+        c.rect(ex - s, ey - s, s * 2, s * 2);
+      } else if (type === 'smart') {
+        const rr2 = 8.6 + wobble;
+        c.moveTo(ex, ey - rr2);
+        c.lineTo(ex + rr2, ey);
+        c.lineTo(ex, ey + rr2);
+        c.lineTo(ex - rr2, ey);
+        c.closePath();
+      } else if (type === 'swarm') {
+        c.arc(ex, ey, 5.4 + wobble * 0.5, 0, TAU);
+      } else {
+        c.arc(ex, ey, 7.5 + wobble, 0, TAU);
+      }
       c.stroke();
-      c.shadowBlur = 0;
+      c.restore();
     }
 
     // Player.

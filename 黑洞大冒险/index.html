@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#05070d">
-  <meta name="description" content="黑洞大冒险：驾驶不断成长的黑洞吞噬整座城市，在 1–3 个猎手黑洞的围猎中扩张，最终吞下 30 层高塔。">
+  <meta name="description" content="黑洞大冒险：驾驶不断成长的黑洞吞噬整座城市，在基础、极速、重装、智能与群猎 5 种猎手的围猎中扩张，拾取护盾、磁力、加速与隐匿道具，最终吞下 30 层高塔。">
   <title>黑洞大冒险 · Black Hole Odyssey</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -75,6 +75,26 @@
         <span id="threat-distance">--</span>
       </div>
 
+      <div id="env-panel" class="env-panel is-hidden" aria-live="polite">
+        <span class="env-dot" aria-hidden="true"></span>
+        <span id="env-text">油污区 · 移动减速</span>
+      </div>
+
+      <div id="buff-panel" class="buff-panel is-hidden" aria-live="polite">
+        <div class="buff-chip is-shield is-hidden" data-buff="shield">
+          <i aria-hidden="true">◇</i><span>护盾</span><b id="buff-shield-t">0.0s</b>
+        </div>
+        <div class="buff-chip is-magnet is-hidden" data-buff="magnet">
+          <i aria-hidden="true">✦</i><span>磁力</span><b id="buff-magnet-t">0.0s</b>
+        </div>
+        <div class="buff-chip is-boost is-hidden" data-buff="boost">
+          <i aria-hidden="true">»</i><span>加速</span><b id="buff-boost-t">0.0s</b>
+        </div>
+        <div class="buff-chip is-ghost is-hidden" data-buff="ghost">
+          <i aria-hidden="true">◌</i><span>隐匿</span><b id="buff-ghost-t">0.0s</b>
+        </div>
+      </div>
+
       <div class="minimap-panel hud-panel">
         <div class="minimap-head">
           <span>城市雷达</span>
@@ -85,6 +105,7 @@
           <span><i class="you"></i>你</span>
           <span><i class="hunter"></i>猎手</span>
           <span><i class="goal"></i>高塔</span>
+          <span><i class="item"></i>道具</span>
         </div>
       </div>
     </section>
@@ -105,7 +126,8 @@
           <div class="menu-metrics">
             <div><b>15</b><span>等级上限</span></div>
             <div><b>03</b><span>风格地图</span></div>
-            <div><b>1–3</b><span>猎手黑洞</span></div>
+            <div><b>05</b><span>猎手类型</span></div>
+            <div><b>04</b><span>增益道具</span></div>
           </div>
 
           <div class="control-strip">
@@ -116,7 +138,7 @@
 
           <div class="menu-warning">
             <span class="warning-mark">!</span>
-            <p><b>猎手比你高 3 级。</b>被它完全罩住就会被吞噬。<br>第二关有 2 个猎手，第三关 3 个——别被包夹。</p>
+            <p><b>猎手比你高 3 级。</b>被它完全罩住就会被吞噬。<br>旧城只有基础猎手，港湾加入重装，云端由极速、智能与 3 只群猎手围猎；街区还会刷新护盾、磁力、加速与隐匿道具。</p>
           </div>
         </div>
 
@@ -138,7 +160,7 @@
                   <div class="map-name"><strong>霓虹旧城</strong><small>NEON OLD TOWN</small></div>
                   <span class="difficulty-dots" data-level="1" aria-label="难度 1"><i></i><i></i><i></i></span>
                 </div>
-                <p>街区松散，霓虹招牌密集，只有 1 个猎手，适合第一次扩张。</p>
+                <p>街区松散，霓虹招牌密集，只有 1 个基础猎手；磁力道具更容易刷新，适合第一次扩张。</p>
                 <div class="map-record"><span>最快通关</span><b data-best="0">尚无记录</b></div>
               </div>
             </button>
@@ -151,7 +173,7 @@
                   <div class="map-name"><strong>钢铁港湾</strong><small>IRON HARBOR</small></div>
                   <span class="difficulty-dots" data-level="2" aria-label="难度 2"><i></i><i></i><i></i></span>
                 </div>
-                <p>锈色码头、集装箱与龙门吊，2 个猎手同时巡逻，高塔更远。</p>
+                <p>锈色码头：油污拖慢脚步，重装猎手直线逼近，货柜与吊钩横在路中央；加速与护盾道具更多。</p>
                 <div class="map-record"><span>最快通关</span><b data-best="1">尚无记录</b></div>
               </div>
             </button>
@@ -164,7 +186,7 @@
                   <div class="map-name"><strong>云端都会</strong><small>SKYLINE METRO</small></div>
                   <span class="difficulty-dots" data-level="3" aria-label="难度 3"><i></i><i></i><i></i></span>
                 </div>
-                <p>紫罗兰高空都市，云海与光桥之间，3 个猎手围猎。</p>
+                <p>紫罗兰高空都市：极速冲刺、智能预判，3 只群猎手环绕俯冲；上升气流可腾空，隐匿道具更多。</p>
                 <div class="map-record"><span>最快通关</span><b data-best="2">尚无记录</b></div>
               </div>
             </button>
