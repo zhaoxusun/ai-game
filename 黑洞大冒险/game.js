@@ -101,6 +101,18 @@
       hunterTypes: ['basic'],
       itemWeights: { magnet: 4, boost: 3, shield: 2, ghost: 1 },
       starterItem: 'magnet',
+      objective: {
+        kind: 'signals',
+        required: 3,
+        icon: '◈',
+        color: '#ff8ad0',
+        label: '信号塔',
+        plural: '霓虹信号塔',
+        phaseText: '吞噬 3 座霓虹信号塔',
+        intro: '先吞下 3 座霓虹信号塔，削弱 30 层高塔的护盾。',
+        completeText: '3 座信号塔熄灭，30 层高塔的护盾出现裂缝。',
+        hint: '信号塔会随黑洞等级逐步解锁'
+      },
       enemySpeed: 0.8,
       enemySpawnDist: 1040,
       majorTiers: [3, 3, 3, 4, 4, 4, 5, 5, 6, 7],
@@ -151,6 +163,18 @@
       hunterTypes: ['basic', 'tank'],
       itemWeights: { boost: 4, shield: 3, magnet: 2, ghost: 2 },
       starterItem: 'shield',
+      objective: {
+        kind: 'cargo',
+        required: 3,
+        icon: '▣',
+        color: '#ffc46e',
+        label: '货柜',
+        plural: '装货柜',
+        phaseText: '把 3 个货柜推入吊装区',
+        intro: '贴住 3 个货柜，把它们推进金色吊装环，启动高塔升降梯。',
+        completeText: '三只货柜全部吊装完成，高塔升降梯已启动。',
+        hint: '贴住货柜推动，亮环就是目的地'
+      },
       enemySpeed: 0.91,
       enemySpawnDist: 940,
       majorTiers: [3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 5],
@@ -208,6 +232,18 @@
       hunterTypes: ['swift', 'smart', 'swarm'],
       itemWeights: { ghost: 4, shield: 3, boost: 2, magnet: 1 },
       starterItem: 'ghost',
+      objective: {
+        kind: 'cores',
+        required: 3,
+        icon: '✦',
+        color: '#8ff4ff',
+        label: '核心',
+        plural: '数据核心',
+        phaseText: '捕获 3 枚巡游数据核心',
+        intro: '追上 3 枚巡游数据核心，关闭主塔防火墙。',
+        completeText: '三枚核心已捕获，主塔防火墙关闭。',
+        hint: '核心会漂移冲刺，追上并触碰'
+      },
       enemySpeed: 1.01,
       enemySpawnDist: 860,
       majorTiers: [3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7],
@@ -568,6 +604,8 @@
     hudBest: $('hud-best'),
     hudMap: $('hud-map'),
     objectiveLevel: $('objective-level'),
+    objectiveIcon: $('objective-icon'),
+    objectiveAction: $('objective-action'),
     objectiveDistance: $('objective-distance'),
     objectiveState: $('objective-state'),
     threatPanel: $('threat-panel'),
@@ -660,6 +698,7 @@
     enemies: [],
     killer: null,
     tower: null,
+    objective: null,
     camera: { x: 0, y: 0, zoom: 1, shake: 0, shakeX: 0, shakeY: 0 },
     objects: [],
     pickups: [],
@@ -1011,6 +1050,7 @@
     }
 
     const enemySpawns = pickEnemySpawns(def, grid, spawn, tower, def.hunters || 1);
+    const objective = generateObjective(def, grid, spawn, tower, objects, occupied, isFree, rng);
 
     return {
       def,
@@ -1019,11 +1059,182 @@
       spawn,
       tower,
       enemySpawns,
+      objective,
       mech: generateMechanics(def, grid, spawn, tower, rng),
       width: grid.width,
       height: grid.height,
       palette: def.palette
     };
+  }
+
+  // ------------------------------------------------------------
+  // Per-map objective targets (P4)
+  //   neon:   three signal towers to swallow
+  //   harbor: push three cargo crates into crane drop zones
+  //   sky:    chase down three drifting data cores
+  // ------------------------------------------------------------
+  function generateObjective(def, grid, spawn, tower, objects, occupied, isFree, rng) {
+    const cfg = def.objective;
+    if (!cfg) return null;
+    const obj = {
+      def: cfg,
+      kind: cfg.kind,
+      required: cfg.required || 3,
+      done: 0,
+      complete: false,
+      targets: [],
+      zones: []
+    };
+
+    const nodes = [];
+    for (let c = 1; c < grid.xs.length - 1; c++) {
+      for (let r = 1; r < grid.ys.length - 1; r++) {
+        const x = grid.xs[c];
+        const y = grid.ys[r];
+        if (dist(x, y, tower.x, tower.y) < 380) continue;
+        if (dist(x, y, spawn.x, spawn.y) < 300) continue;
+        nodes.push({ x, y, c, r });
+      }
+    }
+    for (let i = nodes.length - 1; i > 0; i--) {
+      const j = (rng() * (i + 1)) | 0;
+      const tmp = nodes[i];
+      nodes[i] = nodes[j];
+      nodes[j] = tmp;
+    }
+
+    if (cfg.kind === 'signals') {
+      const tiers = [
+        { r: 36, h: 258, reqLevel: 5, points: 650 },
+        { r: 46, h: 314, reqLevel: 7, points: 900 },
+        { r: 56, h: 372, reqLevel: 9, points: 1200 }
+      ];
+      let picks = [];
+      for (let i = 0; i < nodes.length && picks.length < obj.required; i++) {
+        const n = nodes[i];
+        if (picks.some((p) => dist(p.x, p.y, n.x, n.y) < 620)) continue;
+        if (!isFree(n.x, n.y, 60, 20)) continue;
+        picks.push(n);
+      }
+      // Relax the footprint check if the map is especially dense.
+      for (let i = 0; i < nodes.length && picks.length < obj.required; i++) {
+        const n = nodes[i];
+        if (picks.some((p) => dist(p.x, p.y, n.x, n.y) < 380)) continue;
+        picks.push(n);
+      }
+      picks = picks.slice(0, obj.required);
+      picks.sort((a, b) =>
+        dist(a.x, a.y, spawn.x, spawn.y) - dist(b.x, b.y, spawn.x, spawn.y));
+      for (let i = 0; i < picks.length; i++) {
+        const tier = tiers[Math.min(i, tiers.length - 1)];
+        const n = picks[i];
+        const target = {
+          id: nextObjectId++,
+          kind: 'objective',
+          objType: 'signal',
+          typeKey: 'signalTower',
+          name: `信号塔 ${i + 1}`,
+          x: n.x,
+          y: n.y,
+          r: tier.r,
+          h: tier.h,
+          points: tier.points,
+          reqLevel: tier.reqLevel,
+          hue: 312 + i * 24,
+          seed: 1 + ((rng() * 99999) | 0),
+          phase: rng() * TAU,
+          eaten: false,
+          done: false,
+          goal: false
+        };
+        obj.targets.push(target);
+        objects.push(target);
+        occupied.push({ x: n.x, y: n.y, r: tier.r });
+      }
+    } else if (cfg.kind === 'cargo') {
+      const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+      const usedZones = [];
+      for (let i = 0; i < nodes.length && obj.targets.length < obj.required; i++) {
+        const n = nodes[i];
+        if (obj.targets.some((t) => dist(t.x, t.y, n.x, n.y) < 720)) continue;
+        if (!isFree(n.x, n.y, 46, 24)) continue;
+        const options = [];
+        for (let d = 0; d < dirs.length; d++) {
+          const zc = n.c + dirs[d][0];
+          const zr = n.r + dirs[d][1];
+          if (zc < 0 || zr < 0 || zc >= grid.xs.length || zr >= grid.ys.length) continue;
+          const zone = { x: grid.xs[zc], y: grid.ys[zr], c: zc, r: zr };
+          if (dist(zone.x, zone.y, tower.x, tower.y) < 320) continue;
+          if (usedZones.some((z) => dist(z.x, z.y, zone.x, zone.y) < 320)) continue;
+          options.push(zone);
+        }
+        if (!options.length) continue;
+        const chosen = options[(rng() * options.length) | 0];
+        usedZones.push(chosen);
+        const target = {
+          id: nextObjectId++,
+          kind: 'objective',
+          objType: 'cargo',
+          typeKey: 'cargoObjective',
+          name: '目标货柜',
+          x: n.x,
+          y: n.y,
+          r: 36,
+          h: 46,
+          points: 800,
+          hue: 30 + (rng() * 16 - 8),
+          seed: 1 + ((rng() * 99999) | 0),
+          neon: '#ffc46e',
+          phase: rng() * TAU,
+          vx: 0,
+          vy: 0,
+          delivered: false,
+          done: false,
+          goal: false,
+          zone: { x: chosen.x, y: chosen.y, r: 86, phase: rng() * TAU }
+        };
+        obj.targets.push(target);
+        obj.zones.push(target.zone);
+        objects.push(target);
+        occupied.push({ x: n.x, y: n.y, r: target.r });
+      }
+    } else if (cfg.kind === 'cores') {
+      const picks = [];
+      for (let i = 0; i < nodes.length && picks.length < obj.required; i++) {
+        const n = nodes[i];
+        if (picks.some((p) => dist(p.x, p.y, n.x, n.y) < 700)) continue;
+        picks.push(n);
+      }
+      for (let i = 0; i < picks.length; i++) {
+        const n = picks[i];
+        obj.targets.push({
+          id: nextObjectId++,
+          kind: 'objective',
+          objType: 'core',
+          typeKey: 'dataCore',
+          name: '数据核心',
+          x: n.x,
+          y: n.y,
+          ox: n.x,
+          oy: n.y,
+          r: 28,
+          h: 28,
+          points: 900,
+          phase: rng() * TAU,
+          seed: 1 + ((rng() * 99999) | 0),
+          vx: 0,
+          vy: 0,
+          waypoint: { x: n.x, y: n.y },
+          wayT: 0,
+          dashT: 0,
+          captured: false,
+          done: false,
+          goal: false
+        });
+      }
+    }
+
+    return obj;
   }
 
   // ------------------------------------------------------------
@@ -1307,6 +1518,219 @@
     }
   }
 
+  // ------------------------------------------------------------
+  // P4 objectives
+  // ------------------------------------------------------------
+  function towerReady() {
+    const p = game.player;
+    if (!p || p.level < MAX_LEVEL) return false;
+    return !game.objective || game.objective.complete;
+  }
+
+  function objectiveTargetActive(target) {
+    if (!target) return false;
+    return !target.done && !target.eaten && !target.delivered && !target.captured;
+  }
+
+  function nearestObjectiveTarget() {
+    const obj = game.objective;
+    const p = game.player;
+    if (!obj || !p || obj.complete) return null;
+    let best = null;
+    for (let i = 0; i < obj.targets.length; i++) {
+      const target = obj.targets[i];
+      if (!objectiveTargetActive(target)) continue;
+      let tx = target.x;
+      let ty = target.y;
+      let label = obj.def.label;
+      let mode = 'target';
+      if (obj.kind === 'cargo' && target.zone) {
+        const toCargo = dist(p.x, p.y, target.x, target.y);
+        if (toCargo < 340) {
+          tx = target.zone.x;
+          ty = target.zone.y;
+          label = '吊装区';
+          mode = 'zone';
+        }
+      }
+      const d = dist(p.x, p.y, tx, ty);
+      if (!best || d < best.dist) {
+        best = { x: tx, y: ty, dist: d, label, mode, target };
+      }
+    }
+    return best;
+  }
+
+  function advanceObjective(target) {
+    const obj = game.objective;
+    if (!obj || obj.complete || !target || target.done) return;
+    target.done = true;
+    obj.done = Math.min(obj.required, obj.done + 1);
+    const def = obj.def;
+    const p = game.player;
+    if (p) {
+      addFloater(p.x, p.y - p.radius - 34, `${def.label} ${obj.done}/${obj.required}`, def.color, 18);
+    }
+    updateHUD();
+    if (obj.done >= obj.required) {
+      obj.complete = true;
+      showToast(def.completeText, 'good', 4800);
+      if (game.tower) {
+        spawnShockwave(game.tower.x, game.tower.y, 40, 430, hexToRgba(def.color, 0.6), 1.15);
+        spawnBurst(game.tower.x, game.tower.y - 120, 48, def.color, 220, 3.4);
+      }
+      addShake(0.4);
+      sound.levelUp();
+    }
+    updateTowerHint();
+  }
+
+  function consumeSignal(o) {
+    const p = game.player;
+    if (!o || o.eaten || o.done || !p) return;
+    o.eaten = true;
+    p.eatenCount++;
+    p.pulse = Math.max(p.pulse, 0.35);
+    gainScore(o.points, o.x, o.y, '#ffb3e2');
+    spawnShockwave(o.x, o.y + 8, o.r * 0.5, o.r * 3.2, 'rgba(255, 138, 208, 0.72)', 0.8);
+    spawnBurst(o.x, o.y - o.h * 0.35, 38, '#ff8ad0', 230, 3);
+    addShake(0.3);
+    sound.eat(o.r);
+    advanceObjective(o);
+  }
+
+  function deliverCargo(c) {
+    if (!c || c.delivered || c.done || !c.zone) return;
+    c.delivered = true;
+    gainScore(c.points, c.zone.x, c.zone.y, '#ffe0a0');
+    spawnShockwave(c.zone.x, c.zone.y, c.zone.r * 0.35, c.zone.r * 1.9, 'rgba(255, 196, 110, 0.8)', 0.85);
+    spawnBurst(c.zone.x, c.zone.y, 44, '#ffc46e', 210, 3);
+    addFloater(c.zone.x, c.zone.y - 46, '吊装完成', '#ffe1a3', 18);
+    addShake(0.22);
+    sound.pickup();
+    advanceObjective(c);
+  }
+
+  function captureCore(c) {
+    const p = game.player;
+    if (!c || c.captured || c.done) return;
+    c.captured = true;
+    gainScore(c.points, c.x, c.y, '#a8f6ff');
+    spawnShockwave(c.x, c.y, 18, 130, 'rgba(143, 244, 255, 0.78)', 0.7);
+    spawnBurst(c.x, c.y, 40, '#8ff4ff', 240, 3);
+    if (p) addFloater(p.x, p.y - p.radius - 30, '核心捕获', '#a8f6ff', 17);
+    addShake(0.2);
+    sound.pickup();
+    advanceObjective(c);
+  }
+
+  function updateCargoObjective(dt) {
+    const obj = game.objective;
+    const p = game.player;
+    for (let i = 0; i < obj.targets.length; i++) {
+      const c = obj.targets[i];
+      if (c.delivered || c.done) continue;
+
+      // Cargo keeps a little momentum, so it feels heavy rather than glued.
+      c.x += c.vx * dt;
+      c.y += c.vy * dt;
+      c.vx = damp(c.vx, 0, 3.2, dt);
+      c.vy = damp(c.vy, 0, 3.2, dt);
+
+      const dx = c.x - p.x;
+      const dy = c.y - p.y;
+      const d = Math.hypot(dx, dy);
+      const minD = p.radius * 0.78 + c.r * 0.95;
+      if (d < minD) {
+        const nx = d > 0.001 ? dx / d : Math.cos(p.angle);
+        const ny = d > 0.001 ? dy / d : Math.sin(p.angle);
+        c.x = p.x + nx * minD;
+        c.y = p.y + ny * minD;
+        const push = 78 + Math.min(205, Math.hypot(p.vx, p.vy) * 0.66);
+        c.vx = nx * push;
+        c.vy = ny * push;
+        if (Math.random() < dt * 14) {
+          game.particles.push({
+            x: c.x + (Math.random() * 2 - 1) * c.r,
+            y: c.y + c.h * 0.25,
+            vx: (Math.random() * 2 - 1) * 26,
+            vy: -18 - Math.random() * 28,
+            life: 0.4 + Math.random() * 0.3,
+            maxLife: 0.7,
+            size: 1 + Math.random() * 1.5,
+            color: '#ffd58a',
+            drag: 0.2,
+            gravity: 0,
+            glow: true
+          });
+        }
+      }
+
+      c.x = clamp(c.x, 120, game.world.width - 120);
+      c.y = clamp(c.y, 120, game.world.height - 120);
+      if (c.zone && dist(c.x, c.y, c.zone.x, c.zone.y) < c.zone.r * 0.78) {
+        deliverCargo(c);
+      }
+    }
+  }
+
+  function updateCoreObjective(dt) {
+    const obj = game.objective;
+    const p = game.player;
+    for (let i = 0; i < obj.targets.length; i++) {
+      const c = obj.targets[i];
+      if (c.captured || c.done) continue;
+      c.wayT -= dt;
+      c.dashT = Math.max(0, c.dashT - dt);
+      const wpDist = dist(c.x, c.y, c.waypoint.x, c.waypoint.y);
+      if (c.wayT <= 0 || wpDist < 52) {
+        const a = Math.random() * TAU;
+        const rr = 140 + Math.random() * 330;
+        c.waypoint = {
+          x: clamp(c.ox + Math.cos(a) * rr, 150, game.world.width - 150),
+          y: clamp(c.oy + Math.sin(a) * rr, 150, game.world.height - 150)
+        };
+        c.wayT = 1.9 + Math.random() * 2.6;
+        if (Math.random() < 0.38) c.dashT = 0.55;
+      }
+      const dx = c.waypoint.x - c.x;
+      const dy = c.waypoint.y - c.y;
+      const len = Math.max(1, Math.hypot(dx, dy));
+      const speed = c.dashT > 0 ? 255 : 122;
+      c.vx = damp(c.vx, dx / len * speed, 2.6, dt);
+      c.vy = damp(c.vy, dy / len * speed, 2.6, dt);
+      c.x = clamp(c.x + c.vx * dt, 120, game.world.width - 120);
+      c.y = clamp(c.y + c.vy * dt, 120, game.world.height - 120);
+
+      // Skip the first 80ms of particles; keeps the effect light.
+      if (Math.random() < dt * 11) {
+        game.particles.push({
+          x: c.x + (Math.random() * 2 - 1) * c.r * 0.5,
+          y: c.y + (Math.random() * 2 - 1) * c.r * 0.5,
+          vx: -c.vx * 0.16,
+          vy: -c.vy * 0.16,
+          life: 0.3 + Math.random() * 0.35,
+          maxLife: 0.65,
+          size: 1 + Math.random() * 1.8,
+          color: c.dashT > 0 ? '#c8f7ff' : '#8ff4ff',
+          drag: 0.18,
+          gravity: 0,
+          glow: true
+        });
+      }
+
+      if (dist(p.x, p.y, c.x, c.y) < p.radius * 0.9 + c.r * 0.9) captureCore(c);
+    }
+  }
+
+  function updateObjective(dt) {
+    const obj = game.objective;
+    const p = game.player;
+    if (!obj || !p || obj.complete) return;
+    if (obj.kind === 'cargo') updateCargoObjective(dt);
+    else if (obj.kind === 'cores') updateCoreObjective(dt);
+  }
+
   function pickEnemySpawns(def, grid, spawn, tower, count) {
     const total = Math.max(1, count || 1);
     const baseAngle = -1.9 + (def.id * 0.55);
@@ -1573,16 +1997,40 @@
     dom.hudMap.textContent = `${pad2(game.selectedMap + 1)} · ${MAPS[game.selectedMap].name}`;
     dom.minimapMap.textContent = pad2(game.selectedMap + 1);
 
-    if (game.tower) {
+    const obj = game.objective;
+    if (obj && !obj.complete) {
+      const def = obj.def;
+      const nearest = nearestObjectiveTarget();
+      dom.objectiveIcon.textContent = def.icon;
+      dom.objectiveAction.textContent = def.phaseText;
+      dom.objectiveLevel.textContent = `${def.label} ${obj.done}/${obj.required}`;
+      dom.objectiveDistance.textContent = nearest
+        ? `${nearest.label} ${fmtDist(nearest.dist)}`
+        : `${def.label} ${obj.done}/${obj.required}`;
+      if (obj.kind === 'signals') {
+        const need = nearest && nearest.target ? nearest.target.reqLevel : 0;
+        dom.objectiveState.textContent = nearest && nearest.target
+          ? (p.level >= need ? `可吞噬 · ${nearest.target.name}` : `需 LV.${need} · 吞噬信号塔`)
+          : '信号塔已清空';
+      } else if (obj.kind === 'cargo') {
+        dom.objectiveState.textContent = nearest && nearest.mode === 'zone'
+          ? '把货柜推进亮环'
+          : '贴住货柜，推向金色亮环';
+      } else {
+        dom.objectiveState.textContent = '追上巡游核心，触碰捕获';
+      }
+    } else if (game.tower) {
       const goalDist = dist(p.x, p.y, game.tower.x, game.tower.y);
+      dom.objectiveIcon.textContent = '◎';
+      dom.objectiveAction.textContent = '吞噬 30 层高塔';
       dom.objectiveDistance.textContent = `高塔 ${fmtDist(goalDist)}`;
-      if (p.level >= MAX_LEVEL) {
+      if (towerReady()) {
         dom.objectiveLevel.textContent = '目标已解锁';
         dom.objectiveState.textContent = '冲进高塔底部，完成吞噬';
       } else {
         dom.objectiveLevel.textContent = `目标 LV.${MAX_LEVEL}`;
-        if (p.level >= 11) dom.objectiveState.textContent = game.enemies.length ? '你已比猎手更大，可以反杀' : '猎手已被吞噬，专注高塔';
-        else if (p.level >= 8) dom.objectiveState.textContent = '继续扩张，甩开猎手';
+        if (p.level >= 11) dom.objectiveState.textContent = game.enemies.length ? '护盾已解除 · 可反杀猎手' : '护盾已解除 · 专注高塔';
+        else if (p.level >= 8) dom.objectiveState.textContent = '继续扩张到 LV.15';
         else dom.objectiveState.textContent = '先吃小东西，慢慢变大';
       }
     }
@@ -1687,6 +2135,7 @@
     game.world = world;
     game.objects = world.objects;
     game.tower = world.tower;
+    game.objective = world.objective;
     game.player = player;
     game.enemies = enemies;
     game.killer = null;
@@ -1747,6 +2196,11 @@
       }
     }, 950);
     window.setTimeout(() => {
+      if (game.mode === 'playing' && MAPS[id].objective) {
+        showToast(MAPS[id].objective.intro, 'cyan', 4200);
+      }
+    }, 2100);
+    window.setTimeout(() => {
       if (game.mode === 'playing') {
         const label = `${hunterCompLabel(enemies)} 已进入街区（LV.${enemyLevel}）`;
         showToast(`${label}，小心被完全罩住。`, 'danger', 4200);
@@ -1788,6 +2242,7 @@
     game.enemies = [];
     game.killer = null;
     game.tower = null;
+    game.objective = null;
     game.objects = [];
     game.pickups = [];
     game.effects = [];
@@ -2282,8 +2737,12 @@
     spawnShockwave(p.x, p.y, p.radius * 0.55, p.radius * 3.5, 'rgba(255, 178, 84, 0.72)', 1.05);
     spawnBurst(p.x, p.y, 34, '#ffb458', 190, 3.4);
     if (p.level >= MAX_LEVEL) {
-      game.tower.unlocked = true;
-      showToast('LV.15 · 30层高塔已解锁，立刻前往塔底！', 'good', 4800);
+      if (!game.objective || game.objective.complete) {
+        game.tower.unlocked = true;
+        showToast('LV.15 · 30层高塔已解锁，立刻前往塔底！', 'good', 4800);
+      } else {
+        showToast(`LV.15 · 高塔仍被锁定：先${game.objective.def.phaseText}。`, 'cyan', 5200);
+      }
     } else if (p.level >= 11 && oldLevel < 11) {
       showToast('LV.11 · 你已比猎手更大，现在可以吞掉它。', 'cyan', 4500);
     } else if (p.level === 8) {
@@ -2917,14 +3376,34 @@
       const o = game.objects[i];
       if (o.eaten) continue;
       const d = dist(p.x, p.y, o.x, o.y);
+      if (o.kind === 'objective') {
+        if (o.objType === 'signal') {
+          const canEat = p.level >= o.reqLevel && p.radius > o.r * 1.01;
+          if (canEat && d < p.radius + o.r * 0.18) {
+            consumeSignal(o);
+            continue;
+          }
+          if (!canEat && d < p.radius + o.r * 0.55) {
+            const now = performance.now();
+            if (now - game.lastHintAt > 5000) {
+              game.lastHintAt = now;
+              showToast(`${o.name} 需要 LV.${o.reqLevel} 才能吞噬。`, 'danger', 2400);
+            }
+          }
+        }
+        continue;
+      }
       if (o.goal) {
-        if (p.level >= MAX_LEVEL) {
+        if (towerReady()) {
           if (d < p.radius * 0.92) startTowerWin();
         } else if (d < p.radius + o.r * 0.45) {
           const now = performance.now();
           if (now - game.lastHintAt > 5000) {
             game.lastHintAt = now;
-            showToast(`高塔被锁定：需要 LV.${MAX_LEVEL} 才能吞噬它。`, 'danger', 2700);
+            const msg = p.level >= MAX_LEVEL && game.objective && !game.objective.complete
+              ? `高塔仍被护盾锁定：先${game.objective.def.phaseText}。`
+              : `高塔被锁定：需要 LV.${MAX_LEVEL} 才能吞噬它。`;
+            showToast(msg, 'danger', 2700);
           }
         }
         continue;
@@ -2936,7 +3415,7 @@
 
   function updateTowerHint() {
     if (!game.tower || !game.player) return;
-    if (game.player.level >= MAX_LEVEL) game.tower.unlocked = true;
+    game.tower.unlocked = towerReady();
   }
 
   function updateEffects(dt) {
@@ -3048,6 +3527,7 @@
       updateMechanics(dt);
       updatePlayer(dt);
       updatePickups(dt);
+      updateObjective(dt);
       updateEnemies(dt);
       if (!game.graceAnnounced && game.runTime >= HUNTER_GRACE) {
         game.graceAnnounced = true;
@@ -3930,6 +4410,425 @@
       ctx.stroke();
       ctx.restore();
     }
+  }
+
+  // ------------------------------------------------------------
+  // P4 objective rendering
+  // ------------------------------------------------------------
+  function drawObjectiveGround(time) {
+    const obj = game.objective;
+    if (!obj) return;
+
+    if (obj.kind === 'cargo') {
+      for (let i = 0; i < obj.targets.length; i++) {
+        const c = obj.targets[i];
+        const z = c.zone;
+        if (!z) continue;
+        const active = !c.delivered;
+        const pulse = 0.5 + Math.sin(time * 2.1 + z.phase) * 0.5;
+
+        // Dashed tether from the crate to its drop ring.
+        if (active) {
+          const span = dist(c.x, c.y, z.x, z.y);
+          ctx.save();
+          ctx.globalAlpha = clamp(1 - span / 1500, 0.1, 0.5);
+          ctx.strokeStyle = 'rgba(255, 196, 110, 0.6)';
+          ctx.lineWidth = 1.8;
+          ctx.setLineDash([9, 11]);
+          ctx.lineDashOffset = -time * 26;
+          ctx.beginPath();
+          ctx.moveTo(c.x, c.y + 6);
+          ctx.lineTo(z.x, z.y + 6);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const fill = ctx.createRadialGradient(z.x, z.y, 4, z.x, z.y, z.r);
+        fill.addColorStop(0, active ? 'rgba(255, 205, 130, 0.3)' : 'rgba(160, 255, 210, 0.15)');
+        fill.addColorStop(0.7, active ? 'rgba(255, 178, 84, 0.11)' : 'rgba(120, 240, 190, 0.06)');
+        fill.addColorStop(1, 'rgba(255, 170, 70, 0)');
+        ctx.fillStyle = fill;
+        ctx.beginPath();
+        ctx.ellipse(z.x, z.y + 4, z.r, z.r * 0.6, 0, 0, TAU);
+        ctx.fill();
+
+        ctx.strokeStyle = active ? 'rgba(255, 214, 140, 0.72)' : 'rgba(150, 255, 205, 0.4)';
+        ctx.lineWidth = 2.4;
+        ctx.setLineDash([16, 12]);
+        ctx.lineDashOffset = time * (active ? 20 : -12);
+        ctx.beginPath();
+        ctx.ellipse(z.x, z.y + 4, z.r, z.r * 0.6, 0, 0, TAU);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (active) {
+          ctx.strokeStyle = `rgba(255, 224, 160, ${0.32 + pulse * 0.34})`;
+          ctx.lineWidth = 2;
+          for (let k = 0; k < 4; k++) {
+            const a = time * 0.6 + (k / 4) * TAU;
+            const rr = z.r * 0.72;
+            const cx = z.x + Math.cos(a) * rr;
+            const cy = z.y + 4 + Math.sin(a) * rr * 0.6;
+            const ix = z.x + Math.cos(a) * (rr - 14);
+            const iy = z.y + 4 + Math.sin(a) * (rr - 14) * 0.6;
+            ctx.beginPath();
+            ctx.moveTo(cx - Math.sin(a) * 7, cy + Math.cos(a) * 4.2);
+            ctx.lineTo(ix, iy);
+            ctx.lineTo(cx + Math.sin(a) * 7, cy - Math.cos(a) * 4.2);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+
+        // Delivered zones emit a vertical shaft of light.
+        if (!active) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.globalAlpha = 0.22 + pulse * 0.12;
+          const shaft = ctx.createLinearGradient(z.x, z.y, z.x, z.y - 190);
+          shaft.addColorStop(0, 'rgba(150, 255, 205, 0.4)');
+          shaft.addColorStop(1, 'rgba(150, 255, 205, 0)');
+          ctx.fillStyle = shaft;
+          ctx.beginPath();
+          ctx.moveTo(z.x - z.r * 0.5, z.y);
+          ctx.lineTo(z.x - 10, z.y - 190);
+          ctx.lineTo(z.x + 10, z.y - 190);
+          ctx.lineTo(z.x + z.r * 0.5, z.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    } else if (obj.kind === 'signals') {
+      for (let i = 0; i < obj.targets.length; i++) {
+        const t = obj.targets[i];
+        if (!objectiveTargetActive(t)) continue;
+        const pulse = (time * 0.55 + t.phase) % 1;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = (1 - pulse) * 0.22;
+        ctx.strokeStyle = 'rgba(255, 138, 208, 0.75)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.ellipse(t.x, t.y + 6, t.r * (1.1 + pulse * 0.9), t.r * (0.46 + pulse * 0.38), 0, 0, TAU);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  function drawObjectiveTarget(o, time) {
+    if (!o) return;
+    if (o.objType === 'signal') drawSignalTower(o, time);
+    else if (o.objType === 'cargo') drawObjectiveCargo(o, time);
+    else if (o.objType === 'core') drawDataCore(o, time);
+  }
+
+  function drawSignalTower(o, time) {
+    const p = game.player;
+    const canEat = !!(p && p.level >= o.reqLevel);
+    const col = canEat ? '#ff8ad0' : '#ff7096';
+    const w = o.r * 1.55;
+    const topW = w * 0.3;
+    const topY = o.y - o.h;
+    const baseL = o.x - w / 2;
+    const baseR = o.x + w / 2;
+    const topL = o.x - topW / 2;
+    const topR = o.x + topW / 2;
+
+    drawGroundShadow(o.x, o.y, o.r * 0.95, 0.46);
+
+    // Base bloom.
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const bloom = ctx.createRadialGradient(o.x, o.y, 2, o.x, o.y, o.r * 2.5);
+    bloom.addColorStop(0, hexToRgba(col, 0.28));
+    bloom.addColorStop(0.5, hexToRgba(col, 0.1));
+    bloom.addColorStop(1, hexToRgba(col, 0));
+    ctx.fillStyle = bloom;
+    ctx.beginPath();
+    ctx.ellipse(o.x, o.y + 4, o.r * 2.5, o.r * 0.98, 0, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    // Ground lock ring.
+    ctx.save();
+    ctx.setLineDash(canEat ? [] : [7, 9]);
+    ctx.lineDashOffset = -time * 16;
+    ctx.strokeStyle = hexToRgba(col, canEat ? 0.52 : 0.32);
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.ellipse(o.x, o.y + 4, o.r * 1.55, o.r * 0.56, 0, 0, TAU);
+    ctx.stroke();
+    ctx.restore();
+
+    // Lattice mast.
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = canEat ? 'hsl(306, 30%, 32%)' : 'hsl(304, 18%, 26%)';
+    ctx.lineWidth = Math.max(2, w * 0.07);
+    ctx.beginPath();
+    ctx.moveTo(baseL, o.y);
+    ctx.lineTo(topL, topY);
+    ctx.moveTo(baseR, o.y);
+    ctx.lineTo(topR, topY);
+    ctx.moveTo(o.x, o.y);
+    ctx.lineTo(o.x, topY);
+    ctx.stroke();
+
+    ctx.lineWidth = Math.max(1, w * 0.028);
+    ctx.strokeStyle = canEat ? 'rgba(255, 186, 230, 0.42)' : 'rgba(206, 160, 190, 0.26)';
+    const segs = 5;
+    for (let i = 0; i < segs; i++) {
+      const t0 = i / segs;
+      const t1 = (i + 1) / segs;
+      const l0 = lerp(baseL, topL, t0);
+      const r0 = lerp(baseR, topR, t0);
+      const l1 = lerp(baseL, topL, t1);
+      const r1 = lerp(baseR, topR, t1);
+      const y0 = lerp(o.y, topY, t0);
+      const y1 = lerp(o.y, topY, t1);
+      ctx.beginPath();
+      ctx.moveTo(l0, y0);
+      ctx.lineTo(r1, y1);
+      ctx.moveTo(r0, y0);
+      ctx.lineTo(l1, y1);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Neon bands.
+    for (let i = 0; i < 3; i++) {
+      const t = 0.28 + i * 0.24;
+      const y = lerp(o.y, topY, t);
+      const ww = lerp(w, topW, t);
+      const flick = 0.5 + Math.sin(time * 2.6 + o.phase + i * 1.7) * 0.5;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = hexToRgba(col, 0.32 + flick * 0.46);
+      ctx.lineWidth = 2.2;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.moveTo(o.x - ww / 2 - 2, y);
+      ctx.lineTo(o.x + ww / 2 + 2, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Beacon + scan beam.
+    const blink = 0.5 + Math.sin(time * 4 + o.phase) * 0.5;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.16 + blink * 0.12;
+    const beam = ctx.createLinearGradient(o.x, topY - 150, o.x, topY);
+    beam.addColorStop(0, hexToRgba(col, 0));
+    beam.addColorStop(1, hexToRgba(col, 0.6));
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(o.x - 4, topY);
+    ctx.lineTo(o.x - 26, topY - 150);
+    ctx.lineTo(o.x + 26, topY - 150);
+    ctx.lineTo(o.x + 4, topY);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+    const halo = ctx.createRadialGradient(o.x, topY, 0, o.x, topY, 30);
+    halo.addColorStop(0, hexToRgba(col, 0.95));
+    halo.addColorStop(1, hexToRgba(col, 0));
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(o.x, topY, 30, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = '#fff2fb';
+    ctx.beginPath();
+    ctx.arc(o.x, topY, 2.6 + blink * 1.6, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+
+    // Locked sigil hovering at the base.
+    if (!canEat) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 126, 158, 0.5)';
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([4, 6]);
+      ctx.lineDashOffset = time * 12;
+      ctx.beginPath();
+      ctx.arc(o.x, o.y - o.h * 0.42, o.r * 0.62, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+  }
+
+  function drawObjectiveCargo(o, time) {
+    if (o.delivered) return;
+    const w = o.r * 2.02;
+    const h = o.h * 0.84;
+    const d = o.r * 0.5;
+    drawGroundShadow(o.x, o.y, o.r, 0.4);
+
+    // Gold pickup ring so the crate reads as interactive.
+    const pulse = (time * 0.85 + o.phase) % 1;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = (1 - pulse) * 0.36;
+    ctx.strokeStyle = 'rgba(255, 205, 120, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(o.x, o.y + 5, o.r * (1.2 + pulse * 0.5), o.r * (0.44 + pulse * 0.2), 0, 0, TAU);
+    ctx.stroke();
+    ctx.restore();
+
+    const info = drawPrism(
+      o.x, o.y, w, h, d,
+      'hsl(34, 34%, 30%)',
+      'hsl(33, 36%, 15%)',
+      'hsl(36, 32%, 39%)',
+      'rgba(255, 236, 194, 0.2)'
+    );
+
+    // Corrugation.
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(o.x - w / 2, info.frontTop, w, h);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 12; i++) {
+      const lx = o.x - w / 2 + (i + 0.5) * (w / 12);
+      ctx.beginPath();
+      ctx.moveTo(lx, info.frontTop);
+      ctx.lineTo(lx, info.frontBottom);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Gold hazard bands + arrow.
+    const bandY = info.frontTop + h * 0.4;
+    ctx.fillStyle = 'rgba(255, 198, 108, 0.88)';
+    ctx.fillRect(o.x - w / 2, bandY, w, 4);
+    ctx.fillRect(o.x - w / 2, bandY + h * 0.22, w, 2);
+
+    const bob = Math.sin(time * 3.4 + o.phase) * 3;
+    const ax = o.x;
+    const ay = info.frontTop - 20 + bob;
+    ctx.save();
+    ctx.translate(ax, ay);
+    ctx.fillStyle = '#ffe0a0';
+    ctx.shadowColor = '#ffc46e';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.moveTo(0, 8);
+    ctx.lineTo(-8, -2);
+    ctx.lineTo(-3, -2);
+    ctx.lineTo(-3, -10);
+    ctx.lineTo(3, -10);
+    ctx.lineTo(3, -2);
+    ctx.lineTo(8, -2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(255, 228, 170, 0.78)';
+    ctx.font = `700 ${Math.max(6, o.r * 0.24)}px "SFMono-Regular", monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('PUSH', o.x, info.frontTop + h * 0.72);
+  }
+
+  function drawDataCore(o, time) {
+    if (o.captured) return;
+    const col = '#8ff4ff';
+    const bob = Math.sin(time * 2.4 + o.phase) * 7;
+    const y = o.y - 34 + bob;
+    const rr = o.r;
+
+    // Ground shadow + rising beam.
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.18 + (o.dashT > 0 ? 0.14 : 0);
+    const beam = ctx.createLinearGradient(o.x, o.y, o.x, y - 20);
+    beam.addColorStop(0, hexToRgba(col, 0.34));
+    beam.addColorStop(1, hexToRgba(col, 0));
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(o.x - rr * 0.7, o.y);
+    ctx.lineTo(o.x - 4, y);
+    ctx.lineTo(o.x + 4, y);
+    ctx.lineTo(o.x + rr * 0.7, o.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 0.22;
+    ctx.strokeStyle = hexToRgba(col, 0.6);
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 7]);
+    ctx.lineDashOffset = -time * 20;
+    ctx.beginPath();
+    ctx.ellipse(o.x, o.y + 4, rr * 1.25, rr * 0.48, 0, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Orb.
+    ctx.save();
+    ctx.translate(o.x, y);
+    ctx.globalCompositeOperation = 'lighter';
+    const halo = ctx.createRadialGradient(0, 0, 1, 0, 0, rr * 2.6);
+    halo.addColorStop(0, hexToRgba(col, 0.34));
+    halo.addColorStop(1, hexToRgba(col, 0));
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(0, 0, rr * 2.6, 0, TAU);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    const core = ctx.createRadialGradient(-rr * 0.3, -rr * 0.34, rr * 0.06, 0, 0, rr);
+    core.addColorStop(0, '#ffffff');
+    core.addColorStop(0.3, col);
+    core.addColorStop(0.82, 'rgba(78, 208, 236, 0.5)');
+    core.addColorStop(1, 'rgba(40, 140, 180, 0.06)');
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(0, 0, rr, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = hexToRgba(col, 0.9);
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(0, 0, rr, 0, TAU);
+    ctx.stroke();
+
+    // Orbiting data rings.
+    const spin = time * 1.1 + o.phase;
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 2; i++) {
+      ctx.save();
+      ctx.rotate(spin * (i ? -0.7 : 1) + i * 0.8);
+      ctx.scale(1, 0.42 + i * 0.16);
+      ctx.strokeStyle = hexToRgba(col, 0.58 - i * 0.16);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(0, 0, rr * (1.55 + i * 0.26), 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Inner glyph.
+    ctx.strokeStyle = 'rgba(6, 24, 34, 0.86)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -rr * 0.44);
+    ctx.lineTo(rr * 0.38, 0);
+    ctx.lineTo(0, rr * 0.44);
+    ctx.lineTo(-rr * 0.38, 0);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
   }
 
   // Lift pads visually raise the hole for a moment.
@@ -5225,7 +6124,7 @@
   // ============================================================
   function drawGoalTower(o, time) {
     const p = game.player;
-    const unlocked = p && p.level >= MAX_LEVEL;
+    const unlocked = towerReady();
     const locked = !unlocked;
     const accent = unlocked ? '#ffd36e' : '#ff7b9d';
     let winP = 0;
@@ -5705,6 +6604,8 @@
       drawPickup(entry.ref, time);
     } else if (entry.kind === 'goal') {
       drawGoalTower(entry.ref, time);
+    } else if (entry.kind === 'objective') {
+      drawObjectiveTarget(entry.ref, time);
     } else if (entry.kind === 'building') {
       drawBuilding(entry.ref, time);
     } else {
@@ -5756,6 +6657,7 @@
     ctx.translate(-o.x, -o.y);
     if (o.kind === 'building') drawBuilding(o, time);
     else if (o.kind === 'goal') drawGoalTower(o, time);
+    else if (o.kind === 'objective') drawObjectiveTarget(o, time);
     else drawProp(o, time);
     ctx.restore();
 
@@ -5849,7 +6751,7 @@
   function playerIsOccluded(entries, playerIndex, p) {
     for (let i = playerIndex + 1; i < entries.length; i++) {
       const en = entries[i];
-      if (en.kind !== 'building' && en.kind !== 'goal') continue;
+      if (en.kind !== 'building' && en.kind !== 'goal' && en.kind !== 'objective') continue;
       const o = en.ref;
       const halfW = o.r * 1.15 + 8;
       const top = o.y - o.h - 10;
@@ -5872,17 +6774,27 @@
 
     drawGroundCached();
     drawMechanicsDynamic(time);
+    drawObjectiveGround(time);
 
     const entries = [];
     for (let i = 0; i < game.objects.length; i++) {
       const o = game.objects[i];
       if (o.eaten) continue;
+      if (o.kind === 'objective' && o.delivered) continue;
       if (!inView(o.x, o.y, o.r, o.h)) continue;
       entries.push({
         kind: o.kind === 'goal' ? 'goal' : o.kind,
         y: o.y,
         ref: o
       });
+    }
+    if (game.objective) {
+      for (let i = 0; i < game.objective.targets.length; i++) {
+        const c = game.objective.targets[i];
+        if (c.objType !== 'core' || c.captured) continue;
+        if (!inView(c.x, c.y - 34, c.r + 20, 170)) continue;
+        entries.push({ kind: 'objective', y: c.y, ref: c });
+      }
     }
     if (game.world.mech) {
       const movers = game.world.mech.movers;
@@ -6015,6 +6927,56 @@
         });
       }
     }
+    const obj = game.objective;
+    if (obj && !obj.complete && game.mode !== 'menu') {
+      for (let i = 0; i < obj.targets.length; i++) {
+        const t = obj.targets[i];
+        if (!objectiveTargetActive(t)) continue;
+        const base = worldToScreen(t.x, t.y);
+        if (base.x < margin || base.x > W - margin) continue;
+        let text;
+        let color = obj.def.color;
+        let labelY;
+        if (t.objType === 'signal') {
+          const canEat = p && p.level >= t.reqLevel;
+          const top = worldToScreen(t.x, t.y - t.h);
+          labelY = top.y - 16;
+          if (labelY < 92 || top.y < 40) labelY = base.y - 20;
+          text = canEat ? `${t.name} · 可吞噬` : `${t.name} · 需 LV.${t.reqLevel}`;
+          color = canEat ? '#ff8ad0' : '#ff7f9f';
+        } else if (t.objType === 'cargo') {
+          labelY = base.y - t.r * cam.zoom - 24;
+          text = '货柜 · 推入亮环';
+        } else {
+          const orb = worldToScreen(t.x, t.y - 34);
+          labelY = orb.y - t.r * cam.zoom - 18;
+          text = '数据核心 · 追上触碰';
+        }
+        if (labelY < 48 || labelY > H - 40) continue;
+        drawScreenPill(text, base.x, labelY, color, {
+          bg: 'rgba(12, 9, 20, 0.76)',
+          border: hexToRgba(color, 0.34),
+          size: 9
+        });
+      }
+      if (obj.kind === 'cargo') {
+        for (let i = 0; i < obj.zones.length; i++) {
+          const z = obj.zones[i];
+          const nearCargo = obj.targets.some((t) =>
+            !t.delivered && dist(t.x, t.y, z.x, z.y) < 700);
+          if (!nearCargo) continue;
+          const zp = worldToScreen(z.x, z.y);
+          const zy = zp.y - z.r * cam.zoom * 0.62 - 16;
+          if (zp.x < margin || zp.x > W - margin || zy < 48 || zy > H - 40) continue;
+          drawScreenPill('吊装区', zp.x, zy, '#ffd9a0', {
+            bg: 'rgba(24, 17, 8, 0.7)',
+            border: 'rgba(255, 203, 122, 0.34)',
+            size: 8,
+            height: 21
+          });
+        }
+      }
+    }
     const tower = game.tower;
     if (tower && !tower.eaten && game.mode !== 'menu') {
       const base = worldToScreen(tower.x, tower.y);
@@ -6022,10 +6984,18 @@
       let labelY = top.y - 18;
       if (labelY < 92 || top.y < 40) labelY = base.y - 18;
       if (base.x > 40 && base.x < W - 40 && labelY > 48 && labelY < H - 40) {
-        const unlocked = p && p.level >= MAX_LEVEL;
-        drawScreenPill(unlocked ? '30F · 可以吞噬' : '30F · 需要 LV.15', base.x, labelY, unlocked ? '#ffd36e' : '#ff819e', {
-          bg: unlocked ? 'rgba(24, 18, 7, 0.8)' : 'rgba(22, 7, 13, 0.78)',
-          border: unlocked ? 'rgba(255, 200, 103, 0.36)' : 'rgba(255, 90, 126, 0.28)',
+        const unlocked = towerReady();
+        const gated = !unlocked && p && p.level >= MAX_LEVEL;
+        const gateColor = (game.objective && game.objective.def.color) || '#8ff4ff';
+        const color = unlocked ? '#ffd36e' : gated ? gateColor : '#ff819e';
+        const text = unlocked
+          ? '30F · 可以吞噬'
+          : gated
+            ? '30F · 先完成前置目标'
+            : '30F · 需要 LV.15';
+        drawScreenPill(text, base.x, labelY, color, {
+          bg: unlocked ? 'rgba(24, 18, 7, 0.8)' : gated ? 'rgba(9, 20, 24, 0.8)' : 'rgba(22, 7, 13, 0.78)',
+          border: unlocked ? 'rgba(255, 200, 103, 0.36)' : hexToRgba(color, 0.32),
           size: 9
         });
       }
@@ -6118,9 +7088,19 @@
   function drawCompasses(time) {
     if (!game.player) return;
     const plates = [];
-    if (game.tower && !game.tower.eaten && game.mode !== 'victory' && game.mode !== 'gameover') {
-      const goalDist = dist(game.player.x, game.player.y, game.tower.x, game.tower.y);
-      drawEdgeArrow(game.tower.x, game.tower.y, '#ffd36e', `高塔 ${fmtDist(goalDist)}`, 0, plates);
+    const playing = game.mode !== 'victory' && game.mode !== 'gameover';
+    if (playing) {
+      const obj = game.objective;
+      if (obj && !obj.complete) {
+        // Stage 1: point at the nearest unfinished objective target.
+        const near = nearestObjectiveTarget();
+        if (near) {
+          drawEdgeArrow(near.x, near.y, obj.def.color, `${near.label} ${fmtDist(near.dist)}`, 0, plates);
+        }
+      } else if (game.tower && !game.tower.eaten) {
+        const goalDist = dist(game.player.x, game.player.y, game.tower.x, game.tower.y);
+        drawEdgeArrow(game.tower.x, game.tower.y, '#ffd36e', `高塔 ${fmtDist(goalDist)}`, 0, plates);
+      }
     }
     if (game.player && game.mode === 'playing') {
       let nearest = null;
@@ -6268,6 +7248,76 @@
     c.restore();
   }
 
+  function drawMinimapObjective(c, mx, my, scale) {
+    const obj = game.objective;
+    if (!obj) return;
+    c.save();
+
+    if (obj.kind === 'cargo') {
+      for (let i = 0; i < obj.zones.length; i++) {
+        const z = obj.zones[i];
+        const zx = mx(z.x);
+        const zy = my(z.y);
+        const zr = Math.max(3.2, z.r * scale);
+        c.strokeStyle = 'rgba(255, 202, 120, 0.62)';
+        c.fillStyle = 'rgba(255, 178, 84, 0.12)';
+        c.lineWidth = 1;
+        c.beginPath();
+        c.arc(zx, zy, zr, 0, TAU);
+        c.fill();
+        c.stroke();
+        c.strokeStyle = 'rgba(255, 224, 165, 0.38)';
+        c.beginPath();
+        c.arc(zx, zy, zr * 0.55, 0, TAU);
+        c.stroke();
+      }
+    }
+
+    for (let i = 0; i < obj.targets.length; i++) {
+      const t = obj.targets[i];
+      if (!objectiveTargetActive(t)) continue;
+      const x = mx(t.x);
+      const y = my(t.y);
+      const pulse = 1 + Math.sin(game.timeNow * 3.1 + t.phase) * 0.18;
+      if (t.objType === 'signal') {
+        c.fillStyle = '#ff8ad0';
+        c.shadowColor = '#ff8ad0';
+        c.shadowBlur = 9;
+        c.beginPath();
+        c.moveTo(x, y - 5.4 * pulse);
+        c.lineTo(x + 4.2, y + 3.2);
+        c.lineTo(x - 4.2, y + 3.2);
+        c.closePath();
+        c.fill();
+        c.beginPath();
+        c.arc(x, y - 6.6 * pulse, 1.4, 0, TAU);
+        c.fill();
+      } else if (t.objType === 'cargo') {
+        c.fillStyle = '#ffc46e';
+        c.shadowColor = '#ffc46e';
+        c.shadowBlur = 8;
+        c.fillRect(x - 2.6 * pulse, y - 2.6 * pulse, 5.2 * pulse, 5.2 * pulse);
+        c.strokeStyle = 'rgba(255, 236, 190, 0.5)';
+        c.lineWidth = 1;
+        c.strokeRect(x - 5 * pulse, y - 5 * pulse, 10 * pulse, 10 * pulse);
+      } else {
+        c.save();
+        c.translate(x, y);
+        c.rotate(Math.PI / 4);
+        c.fillStyle = '#8ff4ff';
+        c.shadowColor = '#8ff4ff';
+        c.shadowBlur = 9;
+        c.fillRect(-2.6 * pulse, -2.6 * pulse, 5.2 * pulse, 5.2 * pulse);
+        c.strokeStyle = 'rgba(180, 250, 255, 0.5)';
+        c.lineWidth = 1;
+        c.strokeRect(-5 * pulse, -5 * pulse, 10 * pulse, 10 * pulse);
+        c.restore();
+      }
+    }
+    c.shadowBlur = 0;
+    c.restore();
+  }
+
   function drawMinimap() {
     if (!game.world || !game.player) return;
     const c = miniCtx;
@@ -6322,6 +7372,7 @@
 
     // Interactive mechanics markers.
     if (world.mech) drawMinimapMechanics(c, world, mx, my, scale);
+    drawMinimapObjective(c, mx, my, scale);
 
     // Viewport.
     const cam = game.camera;
@@ -6649,7 +7700,7 @@
       p.targetRadius = targetRadiusForScore(p.score, p.level);
       p.radius = p.targetRadius;
       p.pulse = 1;
-      if (p.level >= MAX_LEVEL && game.tower) game.tower.unlocked = true;
+      if (p.level >= MAX_LEVEL && game.tower) game.tower.unlocked = towerReady();
       syncEnemyLevel();
       game.camera.zoom = getTargetZoom(p);
       updateHUD();
@@ -6660,6 +7711,15 @@
       game.player.y = clamp(Number(y) || 0, 20, game.world.height - 20);
       game.camera.x = game.player.x;
       game.camera.y = game.player.y;
+    },
+    finishObjective() {
+      const obj = game.objective;
+      if (!obj) return;
+      for (let i = 0; i < obj.targets.length; i++) {
+        if (obj.complete) break;
+        advanceObjective(obj.targets[i]);
+      }
+      updateHUD();
     },
     win: startTowerWin,
     lose: startPlayerDeath,
