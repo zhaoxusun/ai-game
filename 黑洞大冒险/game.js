@@ -510,8 +510,16 @@
           if (!AC) return;
           this.ctx = new AC();
           this.master = this.ctx.createGain();
-          this.master.gain.value = 1.0;
-          this.master.connect(this.ctx.destination);
+          this.master.gain.value = 1.4;
+          // 轻度压缩，提升整体响度并避免削波
+          this.compressor = this.ctx.createDynamicsCompressor();
+          this.compressor.threshold.value = -18;
+          this.compressor.knee.value = 24;
+          this.compressor.ratio.value = 6;
+          this.compressor.attack.value = 0.003;
+          this.compressor.release.value = 0.18;
+          this.master.connect(this.compressor);
+          this.compressor.connect(this.ctx.destination);
         }
         if (this.ctx.state === 'suspended') this.ctx.resume();
       } catch (err) {
@@ -544,44 +552,44 @@
       if (now - this.lastEat < 36) return;
       this.lastEat = now;
       const pitch = clamp(560 - size * 2.5, 120, 540);
-      this.tone(pitch + Math.random() * 40, 0.095, 'sine', 0.07, pitch * 0.55);
-      if (size > 24) this.tone(86 + Math.random() * 18, 0.2, 'triangle', 0.05, 48);
+      this.tone(pitch + Math.random() * 40, 0.095, 'sine', 0.55, pitch * 0.55);
+      if (size > 24) this.tone(86 + Math.random() * 18, 0.2, 'triangle', 0.36, 48);
     }
 
     levelUp() {
       if (!this.enabled) return;
       [0, 90, 180, 300].forEach((delay, i) => {
-        window.setTimeout(() => this.tone(330 * Math.pow(1.26, i), 0.24, 'triangle', 0.07, 660), delay);
+        window.setTimeout(() => this.tone(330 * Math.pow(1.26, i), 0.24, 'triangle', 0.5, 660), delay);
       });
     }
 
     pickup() {
       if (!this.enabled) return;
-      this.tone(620, 0.1, 'triangle', 0.06, 940);
-      window.setTimeout(() => this.tone(940, 0.14, 'sine', 0.05, 1380), 62);
+      this.tone(620, 0.1, 'triangle', 0.48, 940);
+      window.setTimeout(() => this.tone(940, 0.14, 'sine', 0.4, 1380), 62);
     }
 
     danger() {
       if (!this.enabled) return;
-      this.tone(145, 0.22, 'sawtooth', 0.048, 92);
+      this.tone(145, 0.22, 'sawtooth', 0.36, 92);
     }
 
     win() {
       if (!this.enabled) return;
       [0, 140, 280, 440, 650].forEach((delay, i) => {
-        window.setTimeout(() => this.tone([262, 330, 392, 523, 659][i], 0.48, 'triangle', 0.075, 0), delay);
+        window.setTimeout(() => this.tone([262, 330, 392, 523, 659][i], 0.48, 'triangle', 0.5, 0), delay);
       });
     }
 
     lose() {
       if (!this.enabled) return;
-      this.tone(210, 0.8, 'sawtooth', 0.06, 48);
-      this.tone(104, 1.05, 'triangle', 0.04, 32);
+      this.tone(210, 0.8, 'sawtooth', 0.42, 48);
+      this.tone(104, 1.05, 'triangle', 0.32, 32);
     }
 
     click() {
       if (!this.enabled) return;
-      this.tone(720, 0.05, 'sine', 0.035, 540);
+      this.tone(720, 0.05, 'sine', 0.3, 540);
     }
   }
 
