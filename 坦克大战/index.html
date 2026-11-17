@@ -171,12 +171,13 @@
         </div>
 
         <div class="touch" id="touch" aria-label="触屏操作">
-          <div class="dpad">
-            <button class="tbtn t-up" data-dir="up" type="button" aria-label="上">▲</button>
-            <button class="tbtn t-left" data-dir="left" type="button" aria-label="左">◀</button>
-            <span class="dpad-center" aria-hidden="true"></span>
-            <button class="tbtn t-right" data-dir="right" type="button" aria-label="右">▶</button>
-            <button class="tbtn t-down" data-dir="down" type="button" aria-label="下">▼</button>
+          <div class="joystick" id="joystick" role="group" aria-label="拖动摇杆控制移动方向">
+            <span class="joy-ring" aria-hidden="true"></span>
+            <span class="joy-arrow a-up" data-dir="up" aria-hidden="true">▲</span>
+            <span class="joy-arrow a-right" data-dir="right" aria-hidden="true">▶</span>
+            <span class="joy-arrow a-down" data-dir="down" aria-hidden="true">▼</span>
+            <span class="joy-arrow a-left" data-dir="left" aria-hidden="true">◀</span>
+            <span class="joy-knob" id="joystick-knob" aria-hidden="true"><i></i></span>
           </div>
           <button class="fire-btn" id="btn-fire" type="button" aria-label="开火">开火<small>FIRE</small></button>
         </div>
@@ -205,6 +206,7 @@
               <span class="key-desc">暂停 / 继续</span>
             </div>
           </div>
+          <p class="touch-tip">触屏：拖动左侧摇杆移动，按住右侧按钮连续开火。</p>
         </section>
 
         <section class="panel">

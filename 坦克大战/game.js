@@ -496,6 +496,7 @@
   /* ---------------- 开始 / 暂停 / 结束 ---------------- */
   function newGame() {
     ensureAudio();
+    clearInput();
     state.score = 0;
     state.lives = 3;
     state.weapon = 0;
@@ -560,6 +561,10 @@
   let dirHistory = [];
   let fireHeld = false;
   const touchFire = { held: false };
+  const joystickEl = $('joystick');
+  const joystickKnob = $('joystick-knob');
+  let joyDir = null;
+  let joyPointerId = null;
 
   function pressDir(dir) {
     activeDirs.add(dir);
@@ -572,7 +577,25 @@
     dirHistory = dirHistory.filter((d) => d !== dir);
   }
 
+  function setJoyDir(dir) {
+    if (dir === joyDir) return;
+    joyDir = dir;
+    if (!joystickEl) return;
+    joystickEl.dataset.dir = dir || '';
+    joystickEl.querySelectorAll('.joy-arrow').forEach((el) => {
+      el.classList.toggle('is-on', el.dataset.dir === dir);
+    });
+  }
+
+  function resetJoystick() {
+    joyPointerId = null;
+    if (joystickEl) joystickEl.classList.remove('is-active');
+    if (joystickKnob) joystickKnob.style.transform = '';
+    setJoyDir(null);
+  }
+
   function currentDir() {
+    if (joyDir) return joyDir;
     for (let i = dirHistory.length - 1; i >= 0; i -= 1) {
       if (activeDirs.has(dirHistory[i])) return dirHistory[i];
     }
@@ -584,7 +607,8 @@
     dirHistory = [];
     fireHeld = false;
     touchFire.held = false;
-    document.querySelectorAll('.tbtn.is-active, .fire-btn.is-active').forEach((el) => {
+    resetJoystick();
+    document.querySelectorAll('.fire-btn.is-active').forEach((el) => {
       el.classList.remove('is-active');
     });
   }
@@ -643,35 +667,69 @@
   window.addEventListener('blur', () => {
     releaseDir('up'); releaseDir('down'); releaseDir('left'); releaseDir('right');
     fireHeld = false;
+    touchFire.held = false;
+    resetJoystick();
   });
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && state.mode === 'playing') togglePause();
   });
 
-  // 触屏方向键
-  document.querySelectorAll('.tbtn[data-dir]').forEach((btn) => {
-    const dir = btn.dataset.dir;
-    const down = (e) => {
+  // 触屏虚拟摇杆
+  if (joystickEl) {
+    const updateJoystick = (e) => {
+      const rect = joystickEl.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      let dx = e.clientX - cx;
+      let dy = e.clientY - cy;
+      const dist = Math.hypot(dx, dy) || 0;
+      const maxR = rect.width * 0.29;
+      if (dist > maxR) {
+        dx = (dx / dist) * maxR;
+        dy = (dy / dist) * maxR;
+      }
+      if (joystickKnob) {
+        joystickKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+      }
+      if (dist < maxR * 0.2) {
+        setJoyDir(null);
+        return;
+      }
+      if (Math.abs(dx) > Math.abs(dy)) setJoyDir(dx > 0 ? 'right' : 'left');
+      else setJoyDir(dy > 0 ? 'down' : 'up');
+    };
+
+    const joyDown = (e) => {
       e.preventDefault();
       ensureAudio();
-      pressDir(dir);
-      btn.classList.add('is-active');
-      if (btn.setPointerCapture && e.pointerId !== undefined) {
-        try { btn.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+      joyPointerId = e.pointerId;
+      joystickEl.classList.add('is-active');
+      if (joystickEl.setPointerCapture && e.pointerId !== undefined) {
+        try { joystickEl.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
       }
+      updateJoystick(e);
     };
-    const up = (e) => {
+
+    const joyMove = (e) => {
+      if (joyPointerId !== e.pointerId) return;
+      e.preventDefault();
+      updateJoystick(e);
+    };
+
+    const joyUp = (e) => {
+      if (joyPointerId !== null && e.pointerId !== joyPointerId) return;
       if (e) e.preventDefault();
-      releaseDir(dir);
-      btn.classList.remove('is-active');
+      resetJoystick();
     };
-    btn.addEventListener('pointerdown', down);
-    btn.addEventListener('pointerup', up);
-    btn.addEventListener('pointercancel', up);
-    btn.addEventListener('pointerleave', (e) => { if (e.buttons === 0) up(e); });
-    btn.addEventListener('contextmenu', (e) => e.preventDefault());
-  });
+
+    joystickEl.addEventListener('pointerdown', joyDown);
+    joystickEl.addEventListener('pointermove', joyMove);
+    joystickEl.addEventListener('pointerup', joyUp);
+    joystickEl.addEventListener('pointercancel', joyUp);
+    joystickEl.addEventListener('lostpointercapture', joyUp);
+    joystickEl.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
 
   const fireBtn = dom.fireBtn;
   if (fireBtn) {
