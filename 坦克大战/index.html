@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05080f">
+  <meta name="description" content="坦克大战 · Tank Battle —— 守住基地，击毁全部敌军。支持键盘与触屏的复古街机射击游戏。">
+  <title>坦克大战 · Tank Battle</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a101c'/%3E%3Cpath d='M7 21h18v5H7z' fill='%23ffb347'/%3E%3Cpath d='M10 17h12v5H10z' fill='%233ee0c8'/%3E%3Cpath d='M16 12h3v6h-3z' fill='%23e9f1ff'/%3E%3Ccircle cx='14' cy='15' r='3' fill='%23e9f1ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <main class="page">
+    <header class="topbar">
+      <a class="back-link" href="../index.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+        返回目录
+      </a>
+
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <rect x="8" y="30" width="32" height="9" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="13" y="22" width="22" height="9" rx="2.5" fill="currentColor" opacity=".85"/>
+            <rect x="23" y="14" width="3.4" height="10" rx="1.7" fill="currentColor"/>
+            <circle cx="19" cy="19" r="5" fill="none" stroke="currentColor" stroke-width="2.4"/>
+            <circle cx="12" cy="34.5" r="1.6" fill="currentColor"/>
+            <circle cx="19" cy="34.5" r="1.6" fill="currentColor"/>
+            <circle cx="26" cy="34.5" r="1.6" fill="currentColor"/>
+            <circle cx="33" cy="34.5" r="1.6" fill="currentColor"/>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <span class="eyebrow">AI GAME WORKSHOP · ARCADE</span>
+          <h1>坦克大战 <span>TANK BATTLE</span></h1>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <span class="chip"><i class="chip-dot"></i>本地单机</span>
+        <button class="ghost-btn" id="btn-sound" type="button" aria-pressed="true">
+          <svg class="ico-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <span id="sound-label">音效开</span>
+        </button>
+        <button class="ghost-btn" id="btn-fullscreen" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 15v5h-5M20 9V4h-5M4 15v5h5"/></svg>
+          <span>全屏</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="layout">
+      <div class="game-col">
+        <div class="hud" aria-live="polite">
+          <div class="hud-cell">
+            <span>SCORE</span>
+            <strong id="stat-score">000000</strong>
+          </div>
+          <div class="hud-cell">
+            <span>HI-SCORE</span>
+            <strong id="stat-hi">000000</strong>
+          </div>
+          <div class="hud-cell">
+            <span>LEVEL</span>
+            <strong id="stat-level">01</strong>
+          </div>
+          <div class="hud-cell">
+            <span>ENEMIES</span>
+            <strong id="stat-enemies">00</strong>
+          </div>
+          <div class="hud-cell hud-lives">
+            <span>LIVES</span>
+            <strong id="stat-lives">♥♥♥</strong>
+          </div>
+          <button class="hud-pause" id="btn-pause" type="button">暂停</button>
+        </div>
+
+        <div class="frame">
+          <span class="corner tl" aria-hidden="true"></span>
+          <span class="corner tr" aria-hidden="true"></span>
+          <span class="corner bl" aria-hidden="true"></span>
+          <span class="corner br" aria-hidden="true"></span>
+
+          <div class="stage" id="stage">
+            <canvas id="game" width="832" height="832" aria-label="坦克大战游戏画面"></canvas>
+            <div class="fx-scan" aria-hidden="true"></div>
+            <div class="fx-vignette" aria-hidden="true"></div>
+
+            <!-- 开始 -->
+            <div class="overlay" id="screen-start">
+              <div class="overlay-card start-card">
+                <div class="start-tank" aria-hidden="true">
+                  <svg viewBox="0 0 150 96">
+                    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                      <path d="M22 70h98v14H22z" rx="4"/>
+                      <path d="M34 50h62v20H34z"/>
+                      <path d="M52 30h10v20H52z"/>
+                      <circle cx="43" cy="42" r="11"/>
+                    </g>
+                    <g fill="currentColor" opacity=".9">
+                      <rect x="26" y="74" width="9" height="6" rx="2"/>
+                      <rect x="41" y="74" width="9" height="6" rx="2"/>
+                      <rect x="56" y="74" width="9" height="6" rx="2"/>
+                      <rect x="71" y="74" width="9" height="6" rx="2"/>
+                      <rect x="86" y="74" width="9" height="6" rx="2"/>
+                      <rect x="101" y="74" width="9" height="6" rx="2"/>
+                      <path d="M110 54h14v12h-14z" opacity=".55"/>
+                    </g>
+                    <path d="M118 36l16 4-16 4z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <span class="eyebrow">BASE DEFENSE · 1985 REMIX</span>
+                <h2>坦克大战</h2>
+                <p>守住底部的基地，击毁全部敌军。每关敌军更强，拾取补给可把火炮强化到 3 级。</p>
+                <div class="start-stats">
+                  <span>最高分 <b id="start-hi">0</b></span>
+                  <span>起始关卡 <b>01</b></span>
+                </div>
+                <button class="btn-primary" id="btn-start" type="button">
+                  开始战斗
+                  <kbd>Enter</kbd>
+                </button>
+                <div class="start-hint">WASD / 方向键移动 · 空格开火 · P 暂停</div>
+              </div>
+            </div>
+
+            <!-- 暂停 -->
+            <div class="overlay is-hidden" id="screen-pause">
+              <div class="overlay-card">
+                <span class="eyebrow">PAUSED</span>
+                <h2>战斗暂停</h2>
+                <p>喘口气，敌军也在等你。</p>
+                <div class="overlay-actions">
+                  <button class="btn-primary" id="btn-resume" type="button">继续战斗</button>
+                  <button class="btn-ghost" id="btn-pause-restart" type="button">重新开始</button>
+                </div>
+                <div class="start-hint">按 P / Esc 继续</div>
+              </div>
+            </div>
+
+            <!-- 过关 -->
+            <div class="overlay is-hidden" id="screen-clear">
+              <div class="overlay-card">
+                <span class="eyebrow success">SECTOR CLEAR</span>
+                <h2 id="clear-title">第 1 关 完成</h2>
+                <p id="clear-bonus">关卡奖励 +500</p>
+                <div class="next-wave" id="clear-next">下一关：第 2 关</div>
+              </div>
+            </div>
+
+            <!-- 结束 -->
+            <div class="overlay is-hidden" id="screen-over">
+              <div class="overlay-card">
+                <span class="eyebrow danger">MISSION FAILED</span>
+                <h2 id="over-title">基地失守</h2>
+                <p id="over-desc">基地被击毁，防线崩溃。</p>
+                <div class="result-grid">
+                  <div><span>得分</span><b id="over-score">0</b></div>
+                  <div><span>关卡</span><b id="over-level">1</b></div>
+                  <div><span>最高分</span><b id="over-hi">0</b></div>
+                </div>
+                <div class="overlay-actions">
+                  <button class="btn-primary" id="btn-retry" type="button">再战一局</button>
+                  <a class="btn-ghost" href="../index.html">返回目录</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="touch" id="touch" aria-label="触屏操作">
+          <div class="dpad">
+            <button class="tbtn t-up" data-dir="up" type="button" aria-label="上">▲</button>
+            <button class="tbtn t-left" data-dir="left" type="button" aria-label="左">◀</button>
+            <span class="dpad-center" aria-hidden="true"></span>
+            <button class="tbtn t-right" data-dir="right" type="button" aria-label="右">▶</button>
+            <button class="tbtn t-down" data-dir="down" type="button" aria-label="下">▼</button>
+          </div>
+          <button class="fire-btn" id="btn-fire" type="button" aria-label="开火">开火<small>FIRE</small></button>
+        </div>
+      </div>
+
+      <aside class="side">
+        <section class="panel panel-intro">
+          <h3><span class="panel-dot"></span>作战简报</h3>
+          <p>你是最后一道防线。基地一旦被击毁，任务立即失败。</p>
+          <ul class="objectives">
+            <li><i class="obj obj-base"></i>守住底部的<strong>基地</strong></li>
+            <li><i class="obj obj-enemy"></i>消灭本关全部<strong>敌军</strong></li>
+            <li><i class="obj obj-power"></i>拾取补给<strong>强化坦克</strong></li>
+          </ul>
+          <div class="keys">
+            <div class="key-row">
+              <span class="keycaps"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>
+              <span class="key-desc">移动（方向键同样可用）</span>
+            </div>
+            <div class="key-row">
+              <span class="keycaps"><kbd class="wide">Space</kbd></span>
+              <span class="key-desc">开火（J / K 亦可）</span>
+            </div>
+            <div class="key-row">
+              <span class="keycaps"><kbd>P</kbd><kbd>Esc</kbd></span>
+              <span class="key-desc">暂停 / 继续</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3><span class="panel-dot teal"></span>战场补给</h3>
+          <ul class="legend">
+            <li><i class="pw pw-star">★</i><span><b>火力强化</b>火炮升一级，最多 3 级</span></li>
+            <li><i class="pw pw-shield">◇</i><span><b>能量护盾</b>8 秒内免疫伤害</span></li>
+            <li><i class="pw pw-bomb">✸</i><span><b>全屏轰炸</b>立即击毁场上全部敌军</span></li>
+            <li><i class="pw pw-clock">◷</i><span><b>时间冻结</b>敌军停止行动 7 秒</span></li>
+            <li><i class="pw pw-life">❤</i><span><b>备用坦克</b>生命 +1</span></li>
+            <li><i class="pw pw-shovel">⛏</i><span><b>基地强化</b>基地外墙变为钢墙 14 秒</span></li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <h3><span class="panel-dot red"></span>敌军图鉴</h3>
+          <ul class="legend enemies">
+            <li><i class="dot dot-basic"></i><span><b>突击兵</b>100 分 · 标准速度</span></li>
+            <li><i class="dot dot-fast"></i><span><b>疾行者</b>200 分 · 高速突进</span></li>
+            <li><i class="dot dot-armor"></i><span><b>重装甲</b>300 分 · 需命中 3 次</span></li>
+            <li><i class="dot dot-power"></i><span><b>重炮手</b>400 分 · 双发重炮</span></li>
+          </ul>
+          <p class="tip">闪烁的敌军被击毁后会掉落补给。</p>
+        </section>
+
+        <section class="panel actions-panel">
+          <button class="btn-ghost wide-btn" id="btn-side-pause" type="button">暂停 / 继续</button>
+          <button class="btn-ghost wide-btn danger-text" id="btn-side-restart" type="button">重新开始</button>
+          <a class="btn-ghost wide-btn" href="../index.html">返回游戏目录</a>
+        </section>
+      </aside>
+    </section>
+
+    <footer class="page-foot">
+      <span>AI GAME WORKSHOP · 坦克大战</span>
+      <span>单人 · 无尽关卡 · 数据保存在本机</span>
+    </footer>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
